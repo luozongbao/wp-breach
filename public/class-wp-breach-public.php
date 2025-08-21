@@ -190,7 +190,7 @@ class WP_Breach_Public {
 			'/gzinflate/i',       // Compression functions
 		);
 
-		$request_uri = $_SERVER['REQUEST_URI'] ?? '';
+		$request_uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field($_SERVER['REQUEST_URI']) : '';
 		$query_string = isset($_SERVER['QUERY_STRING']) ? sanitize_text_field($_SERVER['QUERY_STRING']) : '';
 
 		foreach ( $suspicious_patterns as $pattern ) {
