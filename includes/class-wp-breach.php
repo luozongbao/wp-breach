@@ -152,7 +152,21 @@ class WP_Breach {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 		// Add menu
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
+		
+		// Add admin notices
+		$this->loader->add_action( 'admin_notices', $plugin_admin, 'add_admin_notices' );
+		
+		// Add dashboard widgets
+		$this->loader->add_action( 'wp_dashboard_setup', $plugin_admin, 'add_dashboard_widgets' );
+		
+		// Add admin bar menu
+		$this->loader->add_action( 'admin_bar_menu', $plugin_admin, 'add_admin_bar_menu', 100 );
+		
+		// AJAX handlers
+		$this->loader->add_action( 'wp_ajax_wp_breach_quick_scan', $plugin_admin, 'handle_ajax_requests' );
+		$this->loader->add_action( 'wp_ajax_wp_breach_get_scan_status', $plugin_admin, 'handle_ajax_requests' );
+		$this->loader->add_action( 'wp_ajax_wp_breach_dismiss_vulnerability', $plugin_admin, 'handle_ajax_requests' );
 	}
 
 	/**
@@ -167,6 +181,19 @@ class WP_Breach {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		
+		// Add security headers
+		$this->loader->add_action( 'init', $plugin_public, 'add_security_headers' );
+		
+		// Monitor frontend activity
+		$this->loader->add_action( 'init', $plugin_public, 'monitor_frontend_activity' );
+		
+		// Add shortcodes
+		$this->loader->add_action( 'init', $plugin_public, 'add_shortcodes' );
+		
+		// AJAX handlers for public
+		$this->loader->add_action( 'wp_ajax_wp_breach_report_security_issue', $plugin_public, 'handle_public_ajax' );
+		$this->loader->add_action( 'wp_ajax_nopriv_wp_breach_report_security_issue', $plugin_public, 'handle_public_ajax' );
 	}
 
 	/**
