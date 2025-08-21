@@ -191,7 +191,7 @@ class WP_Breach_Public {
 		);
 
 		$request_uri = $_SERVER['REQUEST_URI'] ?? '';
-		$query_string = $_SERVER['QUERY_STRING'] ?? '';
+		$query_string = isset($_SERVER['QUERY_STRING']) ? sanitize_text_field($_SERVER['QUERY_STRING']) : '';
 
 		foreach ( $suspicious_patterns as $pattern ) {
 			if ( preg_match( $pattern, $request_uri ) || preg_match( $pattern, $query_string ) ) {
