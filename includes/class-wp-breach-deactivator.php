@@ -103,7 +103,12 @@ class WP_Breach_Deactivator {
 			return;
 		}
 
-		$files = array_diff( scandir( $dir ), array( '.', '..' ) );
+		$scandir_result = scandir( $dir );
+		if ( ! is_array( $scandir_result ) ) {
+			// Could not read directory, abort deletion
+			return;
+		}
+		$files = array_diff( $scandir_result, array( '.', '..' ) );
 
 		foreach ( $files as $file ) {
 			$path = $dir . DIRECTORY_SEPARATOR . $file;
