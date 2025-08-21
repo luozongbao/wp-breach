@@ -52,6 +52,9 @@ class WP_Breach_Activator {
 		// Set default options
 		self::set_default_options();
 
+		// Initialize database
+		self::initialize_database();
+
 		// Create necessary capabilities
 		self::create_capabilities();
 
@@ -133,6 +136,44 @@ class WP_Breach_Activator {
 		// Schedule first scan for 5 minutes after activation
 		if ( ! wp_next_scheduled( 'wp_breach_initial_scan' ) ) {
 			wp_schedule_single_event( time() + 300, 'wp_breach_initial_scan' );
+		}
+	}
+
+	/**
+	 * Initialize database tables and settings
+	 *
+	 * @since    1.0.0
+	 */
+	private static function initialize_database() {
+		// Load database class
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/class-wp-breach-database.php';
+		
+		$database = new WP_Breach_Database();
+		
+		// Create database tables (only if they don't exist)
+		$database->create_tables();
+		
+		// Try to initialize default settings (skip if models fail)
+		try {
+			$settings_model = $database->get_settings_model();
+			if ( $settings_model ) {
+				$settings_model->initialize_default_settings();
+			}
+		} catch ( Exception $e ) {
+			// Log error but don't fail activation
+			error_log( 'WP-Breach: Settings initialization failed: ' . $e->getMessage() );
+		}
+		
+		// Set database version
+		$database->update_migration_version( $database->get_db_version() );
+		
+		// Create default scheduled events
+		if ( ! wp_next_scheduled( 'wp_breach_daily_scan' ) ) {
+			wp_schedule_event( time(), 'daily', 'wp_breach_daily_scan' );
+		}
+		
+		if ( ! wp_next_scheduled( 'wp_breach_cleanup' ) ) {
+			wp_schedule_event( time(), 'weekly', 'wp_breach_cleanup' );
 		}
 	}
 

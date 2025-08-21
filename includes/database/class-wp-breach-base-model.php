@@ -505,4 +505,27 @@ abstract class WP_Breach_Base_Model {
 	protected function rollback_transaction() {
 		$this->wpdb->query( 'ROLLBACK' );
 	}
+
+	/**
+	 * Get a single record by multiple field values.
+	 *
+	 * @since    1.0.0
+	 * @param    array    $fields    Array of field => value pairs.
+	 * @return   object|null    The record object or null if not found.
+	 */
+	public function get_by_fields( $fields ) {
+		$where_clauses = array();
+		$values = array();
+
+		foreach ( $fields as $field => $value ) {
+			$where_clauses[] = "`{$field}` = %s";
+			$values[] = $value;
+		}
+
+		$where_clause = implode( ' AND ', $where_clauses );
+		$sql = "SELECT * FROM {$this->table_name} WHERE {$where_clause} LIMIT 1";
+
+		$prepared_sql = $this->wpdb->prepare( $sql, $values );
+		return $this->wpdb->get_row( $prepared_sql );
+	}
 }

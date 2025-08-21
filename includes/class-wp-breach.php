@@ -209,12 +209,6 @@ class WP_Breach {
 	 * @access   private
 	 */
 	private function define_database_hooks() {
-		// Initialize database on plugin activation
-		register_activation_hook( WP_BREACH_PLUGIN_FILE, array( $this, 'activate_plugin' ) );
-		
-		// Clean up database on plugin deactivation
-		register_deactivation_hook( WP_BREACH_PLUGIN_FILE, array( $this, 'deactivate_plugin' ) );
-		
 		// Check for database updates
 		$this->loader->add_action( 'init', $this, 'check_database_version' );
 	}

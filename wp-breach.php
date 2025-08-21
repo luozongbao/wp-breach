@@ -84,3 +84,8 @@ function run_wp_breach() {
 	$plugin->run();
 }
 run_wp_breach();
+
+// Load database test file if in debug mode
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+	require_once WP_BREACH_PLUGIN_DIR . 'test-database.php';
+}

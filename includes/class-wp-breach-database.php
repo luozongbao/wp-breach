@@ -379,7 +379,7 @@ class WP_Breach_Database {
 			published_date DATE NULL,
 			modified_date DATE NULL,
 			affected_software TEXT NULL,
-			references TEXT NULL,
+			`references` TEXT NULL,
 			last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			
 			UNIQUE KEY unique_cve_id (cve_id),
@@ -754,14 +754,14 @@ class WP_Breach_Database {
 	 */
 	private function load_models() {
 		// Load base model first
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'database/class-wp-breach-base-model.php';
+		require_once plugin_dir_path( __FILE__ ) . 'database/class-wp-breach-base-model.php';
 		
 		// Load individual models
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'database/class-wp-breach-scan-model.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'database/class-wp-breach-vulnerability-model.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'database/class-wp-breach-fix-model.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'database/class-wp-breach-settings-model.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'database/class-wp-breach-alert-model.php';
+		require_once plugin_dir_path( __FILE__ ) . 'database/class-wp-breach-scan-model.php';
+		require_once plugin_dir_path( __FILE__ ) . 'database/class-wp-breach-vulnerability-model.php';
+		require_once plugin_dir_path( __FILE__ ) . 'database/class-wp-breach-fix-model.php';
+		require_once plugin_dir_path( __FILE__ ) . 'database/class-wp-breach-settings-model.php';
+		require_once plugin_dir_path( __FILE__ ) . 'database/class-wp-breach-alert-model.php';
 	}
 
 	/**
