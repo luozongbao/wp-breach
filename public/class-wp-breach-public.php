@@ -439,7 +439,17 @@ class WP_Breach_Public {
 		$show_details = $atts['show_details'] === 'true';
 
 		ob_start();
-		include plugin_dir_path( __FILE__ ) . 'partials/wp-breach-public-security-status.php';
+		$partial_file = plugin_dir_path( __FILE__ ) . 'partials/wp-breach-public-security-status.php';
+		if ( file_exists( $partial_file ) ) {
+			include $partial_file;
+		} else {
+			// Display placeholder content for Issue #002
+			echo '<div class="wp-breach-security-status">';
+			echo '<h3>WP-Breach Security Status</h3>';
+			echo '<p>✅ Security foundation implemented</p>';
+			echo '<p>⏳ Full security scanning available in Issue #003</p>';
+			echo '</div>';
+		}
 		return ob_get_clean();
 	}
 
@@ -456,7 +466,16 @@ class WP_Breach_Public {
 		), $atts, 'wp_breach_report_form' );
 
 		ob_start();
-		include plugin_dir_path( __FILE__ ) . 'partials/wp-breach-public-report-form.php';
+		$partial_file = plugin_dir_path( __FILE__ ) . 'partials/wp-breach-public-report-form.php';
+		if ( file_exists( $partial_file ) ) {
+			include $partial_file;
+		} else {
+			// Display placeholder content for Issue #002
+			echo '<div class="wp-breach-report-form">';
+			echo '<h3>' . esc_html( $atts['title'] ) . '</h3>';
+			echo '<p>Security reporting interface will be available in Issue #004.</p>';
+			echo '</div>';
+		}
 		return ob_get_clean();
 	}
 }

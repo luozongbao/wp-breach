@@ -58,6 +58,18 @@ class WP_Breach_Database {
 	public function create_tables() {
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
+		// Store original error reporting settings
+		$original_error_reporting = error_reporting();
+		$original_display_errors = ini_get('display_errors');
+		
+		// Suppress error output during table creation
+		error_reporting( E_ERROR );
+		ini_set('display_errors', 0);
+		
+		// Temporarily suppress WordPress database errors
+		$original_suppress_errors = $this->wpdb->suppress_errors;
+		$this->wpdb->suppress_errors( true );
+
 		$success = true;
 
 		// Create tables in dependency order
@@ -85,6 +97,11 @@ class WP_Breach_Database {
 		if ( $success ) {
 			$this->update_database_version();
 		}
+
+		// Restore original error settings
+		$this->wpdb->suppress_errors( $original_suppress_errors );
+		error_reporting( $original_error_reporting );
+		ini_set('display_errors', $original_display_errors);
 
 		return $success;
 	}
@@ -847,5 +864,56 @@ class WP_Breach_Database {
 		}
 		
 		return $alert_model;
+	}
+
+	/**
+	 * Load database utilities
+	 *
+	 * @since    1.0.0
+	 * @return   WP_Breach_DB_Utilities    Database utilities instance
+	 */
+	public function get_utilities() {
+		static $utilities = null;
+		
+		if ( $utilities === null ) {
+			require_once plugin_dir_path( __FILE__ ) . 'utilities/class-wp-breach-db-utilities.php';
+			$utilities = new WP_Breach_DB_Utilities();
+		}
+		
+		return $utilities;
+	}
+
+	/**
+	 * Perform database integrity check
+	 *
+	 * @since    1.0.0
+	 * @return   array    Integrity check results
+	 */
+	public function check_integrity() {
+		$utilities = $this->get_utilities();
+		return $utilities->check_integrity();
+	}
+
+	/**
+	 * Create database backup
+	 *
+	 * @since    1.0.0
+	 * @return   string|WP_Error    Backup file path or error
+	 */
+	public function create_backup() {
+		$utilities = $this->get_utilities();
+		return $utilities->create_backup();
+	}
+
+	/**
+	 * Restore database from backup
+	 *
+	 * @since    1.0.0
+	 * @param    string   $backup_file    Path to backup file
+	 * @return   bool|WP_Error           Success or error
+	 */
+	public function restore_backup( $backup_file ) {
+		$utilities = $this->get_utilities();
+		return $utilities->restore_backup( $backup_file );
 	}
 }

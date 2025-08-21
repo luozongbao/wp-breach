@@ -29,40 +29,54 @@ class WP_Breach_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-		// Check WordPress version
-		if ( ! self::check_wordpress_version() ) {
-			deactivate_plugins( WP_BREACH_PLUGIN_BASENAME );
-			wp_die(
-				esc_html__( 'WP-Breach requires WordPress 5.0 or higher. Please upgrade WordPress before activating this plugin.', 'wp-breach' ),
-				esc_html__( 'Plugin Activation Error', 'wp-breach' ),
-				array( 'back_link' => true )
-			);
+		// Start output buffering to prevent any unexpected output
+		ob_start();
+		
+		try {
+			// Check WordPress version
+			if ( ! self::check_wordpress_version() ) {
+				ob_end_clean();
+				deactivate_plugins( WP_BREACH_PLUGIN_BASENAME );
+				wp_die(
+					esc_html__( 'WP-Breach requires WordPress 5.0 or higher. Please upgrade WordPress before activating this plugin.', 'wp-breach' ),
+					esc_html__( 'Plugin Activation Error', 'wp-breach' ),
+					array( 'back_link' => true )
+				);
+			}
+
+			// Check PHP version
+			if ( ! self::check_php_version() ) {
+				ob_end_clean();
+				deactivate_plugins( WP_BREACH_PLUGIN_BASENAME );
+				wp_die(
+					esc_html__( 'WP-Breach requires PHP 7.4 or higher. Please upgrade PHP before activating this plugin.', 'wp-breach' ),
+					esc_html__( 'Plugin Activation Error', 'wp-breach' ),
+					array( 'back_link' => true )
+				);
+			}
+
+			// Set default options
+			self::set_default_options();
+
+			// Initialize database
+			self::initialize_database();
+
+			// Create necessary capabilities
+			self::create_capabilities();
+
+			// Schedule initial scan if needed
+			self::schedule_initial_setup();
+
+			// Log activation
+			self::log_activation();
+			
+		} catch ( Exception $e ) {
+			// Log error but don't output it
+			error_log( 'WP-Breach: Activation failed: ' . $e->getMessage() );
 		}
-
-		// Check PHP version
-		if ( ! self::check_php_version() ) {
-			deactivate_plugins( WP_BREACH_PLUGIN_BASENAME );
-			wp_die(
-				esc_html__( 'WP-Breach requires PHP 7.4 or higher. Please upgrade PHP before activating this plugin.', 'wp-breach' ),
-				esc_html__( 'Plugin Activation Error', 'wp-breach' ),
-				array( 'back_link' => true )
-			);
-		}
-
-		// Set default options
-		self::set_default_options();
-
-		// Initialize database
-		self::initialize_database();
-
-		// Create necessary capabilities
-		self::create_capabilities();
-
-		// Schedule initial scan if needed
-		self::schedule_initial_setup();
-
-		// Log activation
-		self::log_activation();
+		
+		// Clean and discard any output
+		ob_end_clean();
 	}
 
 	/**
@@ -145,36 +159,40 @@ class WP_Breach_Activator {
 	 * @since    1.0.0
 	 */
 	private static function initialize_database() {
-		// Load database class
-		require_once WP_BREACH_PLUGIN_DIR . 'includes/class-wp-breach-database.php';
+		// Start output buffering to prevent unexpected output during activation
+		ob_start();
 		
-		$database = new WP_Breach_Database();
-		
-		// Create database tables (only if they don't exist)
-		$database->create_tables();
-		
-		// Try to initialize default settings (skip if models fail)
 		try {
-			$settings_model = $database->get_settings_model();
-			if ( $settings_model ) {
-				$settings_model->initialize_default_settings();
+			// Load database class
+			require_once WP_BREACH_PLUGIN_DIR . 'includes/class-wp-breach-database.php';
+			
+			$database = new WP_Breach_Database();
+			
+			// Create database tables (only if they don't exist)
+			$database->create_tables();
+			
+			// Skip settings initialization during activation to prevent output
+			// Settings will be initialized on first admin page load
+			
+			// Set database version
+			$database->update_migration_version( $database->get_db_version() );
+			
+			// Create default scheduled events
+			if ( ! wp_next_scheduled( 'wp_breach_daily_scan' ) ) {
+				wp_schedule_event( time(), 'daily', 'wp_breach_daily_scan' );
 			}
+			
+			if ( ! wp_next_scheduled( 'wp_breach_cleanup' ) ) {
+				wp_schedule_event( time(), 'weekly', 'wp_breach_cleanup' );
+			}
+			
 		} catch ( Exception $e ) {
-			// Log error but don't fail activation
-			error_log( 'WP-Breach: Settings initialization failed: ' . $e->getMessage() );
+			// Log any errors but don't output them
+			error_log( 'WP-Breach: Database initialization failed: ' . $e->getMessage() );
 		}
 		
-		// Set database version
-		$database->update_migration_version( $database->get_db_version() );
-		
-		// Create default scheduled events
-		if ( ! wp_next_scheduled( 'wp_breach_daily_scan' ) ) {
-			wp_schedule_event( time(), 'daily', 'wp_breach_daily_scan' );
-		}
-		
-		if ( ! wp_next_scheduled( 'wp_breach_cleanup' ) ) {
-			wp_schedule_event( time(), 'weekly', 'wp_breach_cleanup' );
-		}
+		// Clean and discard any output that was generated
+		ob_end_clean();
 	}
 
 	/**
