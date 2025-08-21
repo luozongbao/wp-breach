@@ -126,6 +126,11 @@ class WP_Breach {
 		 */
 		require_once WP_BREACH_PLUGIN_DIR . 'includes/class-wp-breach-database.php';
 
+		/**
+		 * Load scanner classes
+		 */
+		$this->load_scanner_classes();
+
 		$this->loader = new WP_Breach_Loader();
 	}
 
@@ -290,6 +295,32 @@ class WP_Breach {
 	 */
 	public function run() {
 		$this->loader->run();
+	}
+
+	/**
+	 * Load scanner classes and dependencies
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function load_scanner_classes() {
+		// Load scanner interface
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/scanners/interface-wp-breach-scanner.php';
+		
+		// Load scanner utilities
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/scanners/class-wp-breach-scanner-progress.php';
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/scanners/class-wp-breach-scanner-factory.php';
+		
+		// Load main scanner
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/scanners/class-wp-breach-scanner.php';
+		
+		// Load individual scanners
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/scanners/class-wp-breach-core-scanner.php';
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/scanners/class-wp-breach-plugin-scanner.php';
+		
+		// Load detectors
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/scanners/detectors/class-wp-breach-sql-injection-detector.php';
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/scanners/detectors/class-wp-breach-xss-detector.php';
 	}
 
 	/**
