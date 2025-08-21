@@ -1,0 +1,174 @@
+# Copyright (C) 2024 luozongbao
+# This file is distributed under the same license as the WP-Breach plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: WP-Breach 1.0.0\n"
+"Report-Msgid-Bugs-To: luo.zongbao@outlook.com\n"
+# Copyright (C) 2025 luozongbao
+# This file is distributed under the same license as the WP-Breach plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: WP-Breach 1.0.0\n"
+"Report-Msgid-Bugs-To: luo.zongbao@outlook.com\n"
+"POT-Creation-Date: 2025-01-01 00:00:00+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2024-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: WordPress\n"
+"X-Domain: wp-breach\n"
+
+#: admin/class-wp-breach-admin.php:85
+msgid "WP-Breach Security"
+msgstr ""
+
+#: admin/class-wp-breach-admin.php:86
+msgid "WP-Breach"
+msgstr ""
+
+#: admin/class-wp-breach-admin.php:93
+#: admin/class-wp-breach-admin.php:94
+msgid "Dashboard"
+msgstr ""
+
+#: admin/class-wp-breach-admin.php:102
+#: admin/class-wp-breach-admin.php:103
+msgid "Vulnerabilities"
+msgstr ""
+
+#: admin/class-wp-breach-admin.php:111
+#: admin/class-wp-breach-admin.php:112
+msgid "Quick Fix"
+msgstr ""
+
+#: admin/class-wp-breach-admin.php:120
+#: admin/class-wp-breach-admin.php:121
+msgid "Monitoring"
+msgstr ""
+
+#: admin/class-wp-breach-admin.php:129
+#: admin/class-wp-breach-admin.php:130
+msgid "Reports"
+msgstr ""
+
+#: admin/class-wp-breach-admin.php:138
+#: admin/class-wp-breach-admin.php:139
+msgid "Alerts"
+msgstr ""
+
+#: admin/class-wp-breach-admin.php:147
+#: admin/class-wp-breach-admin.php:148
+msgid "Settings"
+msgstr ""
+
+#: admin/class-wp-breach-admin.php:213
+msgid "View Vulnerabilities"
+msgstr ""
+
+#: admin/class-wp-breach-admin.php:221
+msgid "WP-Breach automatic scanning is not scheduled. Please check your settings."
+msgstr ""
+
+#: admin/class-wp-breach-admin.php:222
+msgid "Go to Settings"
+msgstr ""
+
+#: admin/class-wp-breach-admin.php:256
+msgid "WP-Breach Security Overview"
+msgstr ""
+
+#: includes/class-wp-breach-activator.php:49
+msgid "WP-Breach requires WordPress 5.0 or higher. Please upgrade WordPress before activating this plugin."
+msgstr ""
+
+#: includes/class-wp-breach-activator.php:50
+msgid "Plugin Activation Error"
+msgstr ""
+
+#: includes/class-wp-breach-activator.php:58
+msgid "WP-Breach requires PHP 7.4 or higher. Please upgrade PHP before activating this plugin."
+msgstr ""
+
+#: includes/class-wp-breach-deactivator.php:197
+msgid "WP-Breach Security Plugin Deactivated on %s"
+msgstr ""
+
+#: includes/class-wp-breach-i18n.php:42
+msgid "English (United States)"
+msgstr ""
+
+#: includes/class-wp-breach-i18n.php:43
+msgid "Chinese (Simplified)"
+msgstr ""
+
+#: includes/class-wp-breach-i18n.php:44
+msgid "Chinese (Traditional)"
+msgstr ""
+
+#: includes/class-wp-breach-i18n.php:45
+msgid "Spanish (Spain)"
+msgstr ""
+
+#: includes/class-wp-breach-i18n.php:46
+msgid "French (France)"
+msgstr ""
+
+#: includes/class-wp-breach-i18n.php:47
+msgid "German (Germany)"
+msgstr ""
+
+#: includes/class-wp-breach-i18n.php:48
+msgid "Japanese"
+msgstr ""
+
+#: includes/class-wp-breach-i18n.php:49
+msgid "Korean"
+msgstr ""
+
+#: includes/class-wp-breach-i18n.php:50
+msgid "Russian"
+msgstr ""
+
+#: includes/class-wp-breach-i18n.php:51
+msgid "Portuguese (Brazil)"
+msgstr ""
+
+#: includes/class-wp-breach-i18n.php:52
+msgid "Italian"
+msgstr ""
+
+#: includes/class-wp-breach-i18n.php:53
+msgid "Arabic"
+msgstr ""
+
+#: public/class-wp-breach-public.php:332
+msgid "Thank you for reporting the security issue"
+msgstr ""
+
+#: public/class-wp-breach-public.php:381
+msgid "Report Security Issue"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "WP-Breach"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/luozongbao/wp-breach"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Comprehensive WordPress security plugin that scans for vulnerabilities, provides automated fixes, and offers real-time monitoring with professional reporting capabilities."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "luozongbao"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://github.com/luozongbao"
+msgstr ""
