@@ -91,4 +91,9 @@ if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 	if ( file_exists( $test_file ) ) {
 		require_once $test_file;
 	}
+	
+	$scanner_test_file = WP_BREACH_PLUGIN_DIR . 'scanner-test.php';
+	if ( file_exists( $scanner_test_file ) ) {
+		require_once $scanner_test_file;
+	}
 }
