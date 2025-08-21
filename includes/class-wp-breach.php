@@ -77,6 +77,7 @@ class WP_Breach {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->define_database_hooks();
 	}
 
 	/**
@@ -119,6 +120,11 @@ class WP_Breach {
 		 * side of the site.
 		 */
 		require_once WP_BREACH_PLUGIN_DIR . 'public/class-wp-breach-public.php';
+
+		/**
+		 * The class responsible for database operations.
+		 */
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/class-wp-breach-database.php';
 
 		$this->loader = new WP_Breach_Loader();
 	}
@@ -194,6 +200,87 @@ class WP_Breach {
 		// AJAX handlers for public
 		$this->loader->add_action( 'wp_ajax_wp_breach_report_security_issue', $plugin_public, 'handle_public_ajax' );
 		$this->loader->add_action( 'wp_ajax_nopriv_wp_breach_report_security_issue', $plugin_public, 'handle_public_ajax' );
+	}
+
+	/**
+	 * Register all database-related hooks.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_database_hooks() {
+		// Check for database updates
+		$this->loader->add_action( 'init', $this, 'check_database_version' );
+	}
+
+	/**
+	 * Plugin activation handler.
+	 *
+	 * @since    1.0.0
+	 */
+	public function activate_plugin() {
+		$database = new WP_Breach_Database();
+		$database->create_tables();
+		
+		// Initialize default settings
+		$settings_model = $database->get_settings_model();
+		$settings_model->initialize_default_settings();
+		
+		// Set database version
+		$database->update_migration_version( $database->get_db_version() );
+		
+		// Create default scheduled events
+		if ( ! wp_next_scheduled( 'wp_breach_daily_scan' ) ) {
+			wp_schedule_event( time(), 'daily', 'wp_breach_daily_scan' );
+		}
+		
+		if ( ! wp_next_scheduled( 'wp_breach_cleanup' ) ) {
+			wp_schedule_event( time(), 'weekly', 'wp_breach_cleanup' );
+		}
+	}
+
+	/**
+	 * Plugin deactivation handler.
+	 *
+	 * @since    1.0.0
+	 */
+	public function deactivate_plugin() {
+		// Clear scheduled events
+		wp_clear_scheduled_hook( 'wp_breach_daily_scan' );
+		wp_clear_scheduled_hook( 'wp_breach_cleanup' );
+	}
+
+	/**
+	 * Check database version and run migrations if needed.
+	 *
+	 * @since    1.0.0
+	 */
+	public function check_database_version() {
+		$database = new WP_Breach_Database();
+		$current_version = $database->get_migration_version();
+		$required_version = $database->get_db_version();
+		
+		if ( version_compare( $current_version, $required_version, '<' ) ) {
+			// Run database migrations
+			$database->create_tables();
+			$database->update_migration_version( $required_version );
+		}
+	}
+
+	/**
+	 * Get database instance.
+	 *
+	 * @since    1.0.0
+	 * @return   WP_Breach_Database    The database instance.
+	 */
+	public function get_database() {
+		static $database = null;
+		
+		if ( $database === null ) {
+			$database = new WP_Breach_Database();
+		}
+		
+		return $database;
 	}
 
 	/**
