@@ -350,7 +350,7 @@ class WP_Breach_Admin {
 	 */
 	public function handle_ajax_requests() {
 		// Verify nonce
-		if ( ! wp_verify_nonce( $_POST['nonce'] ?? '', 'wp_breach_ajax_nonce' ) ) {
+		if ( ! ( is_array( $_POST ) && isset( $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'], 'wp_breach_ajax_nonce' ) ) ) {
 			wp_die( 'Security check failed' );
 		}
 
