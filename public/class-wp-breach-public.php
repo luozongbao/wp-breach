@@ -199,7 +199,7 @@ class WP_Breach_Public {
 					'pattern'      => $pattern,
 					'request_uri'  => $request_uri,
 					'query_string' => $query_string,
-					'user_agent'   => $_SERVER['HTTP_USER_AGENT'] ?? '',
+					'user_agent'   => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ?? '' ),
 					'ip_address'   => $this->get_client_ip(),
 				) );
 				break;
