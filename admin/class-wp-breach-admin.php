@@ -297,50 +297,6 @@ class WP_Breach_Admin {
 			<h1><?php echo esc_html( 'WP-Breach ' . $page_title ); ?></h1>
 			<div class="notice notice-info">
 				<p><strong><?php echo esc_html( $message ); ?></strong></p>
-				<p>
-					<strong>Issue #002 Status:</strong> Database Schema Implementation - ✅ Complete<br>
-					<strong>Current Implementation:</strong> 11 database tables, 5 model classes, migration system<br>
-					<strong>Next:</strong> Issue #003 (Security Scanner) and Issue #004 (Admin Interface)
-				</p>
-			</div>
-			
-			<?php if ( $page_title === 'Dashboard' ): ?>
-			<div class="notice notice-success">
-				<h3>🎉 Database Foundation Complete!</h3>
-				<p>The WP-Breach database layer has been successfully implemented with:</p>
-				<ul style="list-style-type: disc; margin-left: 20px;">
-					<li>✅ 11 Database tables created and functional</li>
-					<li>✅ 5 Model classes with full CRUD operations</li>
-					<li>✅ Migration system for future updates</li>
-					<li>✅ Database utilities for backup and optimization</li>
-					<li>✅ Data validation and sanitization</li>
-					<li>✅ Foreign key relationships and constraints</li>
-				</ul>
-				
-				<?php
-				// Show database statistics if we can access them
-				try {
-					require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wp-breach-database.php';
-					$database = new WP_Breach_Database();
-					$stats = $database->get_table_stats();
-					if ( ! empty( $stats ) ) {
-						echo '<h4>Database Tables Status:</h4>';
-						echo '<table class="wp-list-table widefat fixed striped">';
-						echo '<thead><tr><th>Table</th><th>Records</th></tr></thead><tbody>';
-						foreach ( $stats as $table => $data ) {
-							echo '<tr><td>' . esc_html( $data['label'] ) . '</td><td>' . esc_html( $data['count'] ) . '</td></tr>';
-						}
-						echo '</tbody></table>';
-					}
-				} catch ( Exception $e ) {
-					echo '<p><em>Database statistics unavailable: ' . esc_html( $e->getMessage() ) . '</em></p>';
-				}
-				?>
-			</div>
-			<?php endif; ?>
-			
-			<div class="notice notice-warning">
-				<p><strong>Development Note:</strong> Admin interface files will be created in Issue #004. Current warnings about missing partials files are expected and will be resolved in the next development phase.</p>
 			</div>
 		</div>
 		<?php
@@ -388,9 +344,13 @@ class WP_Breach_Admin {
 	 * @return   int Number of pending vulnerabilities
 	 */
 	private function get_pending_vulnerabilities_count() {
-		// This would typically query the database
-		// For now, return 0 as a placeholder
-		return 0;
+		try {
+			$database = ( new WP_Breach() )->get_database();
+			$vulnerability_model = $database->get_vulnerability_model();
+			return $vulnerability_model->get_vulnerability_count( array( 'status' => 'active' ) );
+		} catch ( Exception $e ) {
+			return 0;
+		}
 	}
 
 	/**
@@ -479,8 +439,24 @@ class WP_Breach_Admin {
 			wp_send_json_error( array( 'message' => __( 'Insufficient permissions', 'wp-breach' ) ) );
 		}
 
-		// Placeholder for quick scan logic
-		wp_send_json_success( array( 'message' => __( 'Quick scan initiated', 'wp-breach' ) ) );
+		try {
+			// Load scanner class
+			require_once WP_BREACH_PLUGIN_DIR . 'includes/scanners/class-wp-breach-scanner.php';
+			
+			$scanner = new WP_Breach_Scanner();
+			$scan_result = $scanner->start_quick_scan();
+			
+			if ( $scan_result && isset( $scan_result['scan_id'] ) ) {
+				wp_send_json_success( array( 
+					'message' => __( 'Quick scan initiated successfully', 'wp-breach' ),
+					'scan_id' => $scan_result['scan_id']
+				) );
+			} else {
+				wp_send_json_error( array( 'message' => __( 'Failed to start scan', 'wp-breach' ) ) );
+			}
+		} catch ( Exception $e ) {
+			wp_send_json_error( array( 'message' => $e->getMessage() ) );
+		}
 	}
 
 	/**
@@ -494,11 +470,27 @@ class WP_Breach_Admin {
 			wp_send_json_error( array( 'message' => __( 'Insufficient permissions', 'wp-breach' ) ) );
 		}
 
-		// Placeholder for scan status logic
-		wp_send_json_success( array(
-			'status'  => 'idle',
-			'message' => __( 'No scan in progress', 'wp-breach' ),
-		) );
+		try {
+			$database = ( new WP_Breach() )->get_database();
+			$scan_model = $database->get_scan_model();
+			$current_scan = $scan_model->get_current_scan();
+			
+			if ( $current_scan ) {
+				$progress = $scan_model->get_scan_progress( $current_scan['id'] );
+				wp_send_json_success( array(
+					'status' => $current_scan['status'],
+					'progress' => $progress,
+					'message' => sprintf( __( 'Scan in progress: %s', 'wp-breach' ), $progress['current_step'] ?? '' )
+				) );
+			} else {
+				wp_send_json_success( array(
+					'status' => 'idle',
+					'message' => __( 'No scan in progress', 'wp-breach' )
+				) );
+			}
+		} catch ( Exception $e ) {
+			wp_send_json_error( array( 'message' => $e->getMessage() ) );
+		}
 	}
 
 	/**
@@ -518,8 +510,20 @@ class WP_Breach_Admin {
 			wp_send_json_error( array( 'message' => __( 'Invalid vulnerability ID', 'wp-breach' ) ) );
 		}
 
-		// Placeholder for dismiss logic
-		wp_send_json_success( array( 'message' => __( 'Vulnerability dismissed', 'wp-breach' ) ) );
+		try {
+			$database = ( new WP_Breach() )->get_database();
+			$vulnerability_model = $database->get_vulnerability_model();
+			
+			$result = $vulnerability_model->update_vulnerability( $vulnerability_id, array( 'status' => 'dismissed' ) );
+			
+			if ( $result ) {
+				wp_send_json_success( array( 'message' => __( 'Vulnerability dismissed successfully', 'wp-breach' ) ) );
+			} else {
+				wp_send_json_error( array( 'message' => __( 'Failed to dismiss vulnerability', 'wp-breach' ) ) );
+			}
+		} catch ( Exception $e ) {
+			wp_send_json_error( array( 'message' => $e->getMessage() ) );
+		}
 	}
 
 	/**
