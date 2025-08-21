@@ -359,7 +359,10 @@
          */
         checkSecurityHeaders: function() {
             // This would typically be done server-side, but we can check some client-side indicators
-            if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+            if (
+                window.location.protocol !== 'https:' &&
+                !WPBreachPublic.isLocalhostLike(window.location.hostname)
+            ) {
                 WPBreachPublic.showAlert('This site is not using HTTPS. Your data may not be secure.', 'warning');
             }
         },
