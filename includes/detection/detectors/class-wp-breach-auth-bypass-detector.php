@@ -702,7 +702,73 @@ class WP_Breach_Auth_Bypass_Detector {
         $has_httponly = (strpos($cookie_call, 'httponly') !== false || 
                         preg_match('/,\s*true\s*\)/', $cookie_call));
 
-        return $has_secure || $has_httponly;
+        // Extract argument list from function call
+        $args = $this->parse_function_arguments($cookie_call);
+        // setcookie: 6th argument is secure, 7th is httponly
+        $has_secure = false;
+        $has_httponly = false;
+        if (isset($args[5])) {
+            $val = strtolower(trim($args[5]));
+            $has_secure = ($val === 'true' || $val === '1');
+        }
+        if (isset($args[6])) {
+            $val = strtolower(trim($args[6]));
+            $has_httponly = ($val === 'true' || $val === '1');
+        }
+        return $has_secure && $has_httponly;
+    }
+
+    /**
+     * Parse function arguments from a function call string.
+     *
+     * @param string $function_call
+     * @return array
+     */
+    private function parse_function_arguments($function_call) {
+        $paren_start = strpos($function_call, '(');
+        $paren_end = strrpos($function_call, ')');
+        if ($paren_start === false || $paren_end === false || $paren_end <= $paren_start) {
+            return array();
+        }
+        $args_str = substr($function_call, $paren_start + 1, $paren_end - $paren_start - 1);
+        $args = array();
+        $length = strlen($args_str);
+        $current = '';
+        $depth = 0;
+        $in_quote = false;
+        $quote_char = '';
+        for ($i = 0; $i < $length; $i++) {
+            $char = $args_str[$i];
+            if ($in_quote) {
+                $current .= $char;
+                if ($char === $quote_char && ($i === 0 || $args_str[$i-1] !== '\\')) {
+                    $in_quote = false;
+                }
+            } else {
+                if ($char === '"' || $char === "'") {
+                    $in_quote = true;
+                    $quote_char = $char;
+                    $current .= $char;
+                } elseif ($char === '(') {
+                    $depth++;
+                    $current .= $char;
+                } elseif ($char === ')') {
+                    if ($depth > 0) {
+                        $depth--;
+                        $current .= $char;
+                    }
+                } elseif ($char === ',' && $depth === 0) {
+                    $args[] = $current;
+                    $current = '';
+                } else {
+                    $current .= $char;
+                }
+            }
+        }
+        if (trim($current) !== '') {
+            $args[] = $current;
+        }
+        return $args;
     }
 
     /**
