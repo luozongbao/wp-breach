@@ -395,7 +395,18 @@ class WP_Breach_Sql_Injection_Detector {
                 
                 // Check if variable is escaped before use
                 $surrounding_code = substr($content, max(0, $usage_match[1] - 200), 400);
-                if (!preg_match('/(esc_sql|prepare)\s*\(\s*.*?\$' . preg_quote($var_name, '/') . '/', $surrounding_code)) {
+                // First, find all esc_sql or prepare calls in the surrounding code
+                $is_escaped = false;
+                if (preg_match_all('/(esc_sql|prepare)\s*\(([^)]*)\)/', $surrounding_code, $func_matches, PREG_SET_ORDER)) {
+                    foreach ($func_matches as $func_match) {
+                        // Check if the variable is present in the argument list
+                        if (strpos($func_match[2], '$' . $var_name) !== false) {
+                            $is_escaped = true;
+                            break;
+                        }
+                    }
+                }
+                if (!$is_escaped) {
                     $vulnerabilities[] = array(
                         'type' => 'sql-injection',
                         'subtype' => 'tainted_variable',
