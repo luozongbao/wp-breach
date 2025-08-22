@@ -618,4 +618,50 @@ class WP_Breach_Settings_Model extends WP_Breach_Base_Model {
 		// Custom validation rules can be added here based on group/key
 		return true;
 	}
+
+	/**
+	 * Get all settings organized by group.
+	 *
+	 * @since    1.0.0
+	 * @return   array    Settings organized by group.
+	 */
+	public function get_all_settings() {
+		$all_settings = $this->get_all();
+		$organized_settings = array();
+
+		foreach ( $all_settings as $setting ) {
+			$group = $setting->setting_group;
+			$key = $setting->setting_key;
+			
+			if ( ! isset( $organized_settings[ $group ] ) ) {
+				$organized_settings[ $group ] = array();
+			}
+			
+			// Decode JSON values
+			$value = $setting->setting_value;
+			if ( $this->is_json( $value ) ) {
+				$value = json_decode( $value, true );
+			}
+			
+			$organized_settings[ $group ][ $key ] = $value;
+		}
+
+		return $organized_settings;
+	}
+
+	/**
+	 * Check if a string is valid JSON.
+	 *
+	 * @since    1.0.0
+	 * @param    string   $string   String to check.
+	 * @return   bool     True if valid JSON.
+	 */
+	private function is_json( $string ) {
+		if ( ! is_string( $string ) ) {
+			return false;
+		}
+		
+		json_decode( $string );
+		return ( json_last_error() == JSON_ERROR_NONE );
+	}
 }

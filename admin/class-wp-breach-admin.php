@@ -42,8 +42,8 @@ class WP_Breach_Admin {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param    string    $plugin_name       The name of this plugin.
-	 * @param    string    $version    The version of this plugin.
+	 * @param      string    $plugin_name       The name of this plugin.
+	 * @param      string    $version    The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
 		$this->plugin_name = $plugin_name;
@@ -56,18 +56,6 @@ class WP_Breach_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in WP_Breach_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The WP_Breach_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wp-breach-admin.css', array(), $this->version, 'all' );
 	}
 
@@ -77,36 +65,24 @@ class WP_Breach_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in WP_Breach_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The WP_Breach_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-breach-admin.js', array( 'jquery' ), $this->version, false );
-
+		
 		// Localize script for AJAX
 		wp_localize_script( $this->plugin_name, 'wp_breach_ajax', array(
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
-			'nonce'    => wp_create_nonce( 'wp_breach_ajax_nonce' ),
+			'nonce'    => wp_create_nonce( 'wp_breach_nonce' ),
 		) );
 	}
 
 	/**
-	 * Add admin menu pages
+	 * Add admin menu pages.
 	 *
 	 * @since    1.0.0
 	 */
 	public function add_admin_menu() {
 		// Main menu page
 		add_menu_page(
-			__( 'WP-Breach Security', 'wp-breach' ),
+			__( 'WP-Breach', 'wp-breach' ),
 			__( 'WP-Breach', 'wp-breach' ),
 			'wp_breach_view_vulnerabilities',
 			'wp-breach',
@@ -115,7 +91,7 @@ class WP_Breach_Admin {
 			30
 		);
 
-		// Dashboard submenu (same as main menu)
+		// Dashboard submenu
 		add_submenu_page(
 			'wp-breach',
 			__( 'Dashboard', 'wp-breach' ),
@@ -135,14 +111,24 @@ class WP_Breach_Admin {
 			array( $this, 'display_vulnerabilities_page' )
 		);
 
-		// Quick Fix submenu
+		// Settings submenu
 		add_submenu_page(
 			'wp-breach',
-			__( 'Quick Fix', 'wp-breach' ),
-			__( 'Quick Fix', 'wp-breach' ),
-			'wp_breach_apply_fixes',
-			'wp-breach-quick-fix',
-			array( $this, 'display_quick_fix_page' )
+			__( 'Settings', 'wp-breach' ),
+			__( 'Settings', 'wp-breach' ),
+			'wp_breach_view_vulnerabilities',
+			'wp-breach-settings',
+			array( $this, 'display_settings_page' )
+		);
+
+		// Reports submenu
+		add_submenu_page(
+			'wp-breach',
+			__( 'Reports', 'wp-breach' ),
+			__( 'Reports', 'wp-breach' ),
+			'wp_breach_view_vulnerabilities',
+			'wp-breach-reports',
+			array( $this, 'display_reports_page' )
 		);
 
 		// Monitoring submenu
@@ -155,14 +141,14 @@ class WP_Breach_Admin {
 			array( $this, 'display_monitoring_page' )
 		);
 
-		// Reports submenu
+		// Quick Fix submenu
 		add_submenu_page(
 			'wp-breach',
-			__( 'Reports', 'wp-breach' ),
-			__( 'Reports', 'wp-breach' ),
-			'wp_breach_view_reports',
-			'wp-breach-reports',
-			array( $this, 'display_reports_page' )
+			__( 'Quick Fix', 'wp-breach' ),
+			__( 'Quick Fix', 'wp-breach' ),
+			'wp_breach_view_vulnerabilities',
+			'wp-breach-quick-fix',
+			array( $this, 'display_quick_fix_page' )
 		);
 
 		// Alerts submenu
@@ -174,140 +160,309 @@ class WP_Breach_Admin {
 			'wp-breach-alerts',
 			array( $this, 'display_alerts_page' )
 		);
-
-		// Settings submenu
-		add_submenu_page(
-			'wp-breach',
-			__( 'Settings', 'wp-breach' ),
-			__( 'Settings', 'wp-breach' ),
-			'wp_breach_manage_settings',
-			'wp-breach-settings',
-			array( $this, 'display_settings_page' )
-		);
 	}
 
 	/**
-	 * Display the dashboard page
+	 * Get count of pending vulnerabilities for admin bar display.
+	 *
+	 * @since    1.0.0
+	 * @return   int    Number of pending vulnerabilities.
+	 */
+	private function get_pending_vulnerabilities_count() {
+		try {
+			// Check if the main plugin class exists and is available
+			if ( ! class_exists( 'WP_Breach' ) ) {
+				return 0;
+			}
+
+			$plugin = new WP_Breach();
+			
+			// Check if plugin is properly initialized
+			if ( ! $plugin || ! method_exists( $plugin, 'get_database' ) ) {
+				return 0;
+			}
+
+			$database = $plugin->get_database();
+			
+			// Check if database is available
+			if ( ! $database || ! method_exists( $database, 'get_vulnerability_model' ) ) {
+				return 0;
+			}
+
+			$vulnerability_model = $database->get_vulnerability_model();
+			
+			// Check if vulnerability model is available
+			if ( ! $vulnerability_model || ! method_exists( $vulnerability_model, 'get_vulnerability_count' ) ) {
+				return 0;
+			}
+
+			return $vulnerability_model->get_vulnerability_count( array( 'status' => 'active' ) );
+		} catch ( Exception $e ) {
+			// Log error for debugging
+			error_log( 'WP-Breach: Error getting vulnerability count: ' . $e->getMessage() );
+			return 0;
+		} catch ( Error $e ) {
+			// Handle PHP 7+ Error class
+			error_log( 'WP-Breach: Fatal error getting vulnerability count: ' . $e->getMessage() );
+			return 0;
+		}
+	}
+
+	/**
+	 * Add admin bar menu
+	 *
+	 * @since    1.0.0
+	 * @param    WP_Admin_Bar $wp_admin_bar The admin bar object
+	 */
+	public function add_admin_bar_menu( $wp_admin_bar ) {
+		// Only show to users with appropriate capabilities
+		if ( ! current_user_can( 'wp_breach_view_vulnerabilities' ) ) {
+			return;
+		}
+
+		$pending_count = $this->get_pending_vulnerabilities_count();
+		$title = __( 'WP-Breach', 'wp-breach' );
+
+		if ( $pending_count > 0 ) {
+			$title .= ' <span class="ab-label awaiting-mod">' . $pending_count . '</span>';
+		}
+
+		$wp_admin_bar->add_node( array(
+			'id'    => 'wp-breach',
+			'title' => $title,
+			'href'  => admin_url( 'admin.php?page=wp-breach' ),
+		) );
+
+		// Add sub-items
+		$wp_admin_bar->add_node( array(
+			'id'     => 'wp-breach-dashboard',
+			'parent' => 'wp-breach',
+			'title'  => __( 'Dashboard', 'wp-breach' ),
+			'href'   => admin_url( 'admin.php?page=wp-breach' ),
+		) );
+
+		$wp_admin_bar->add_node( array(
+			'id'     => 'wp-breach-scan',
+			'parent' => 'wp-breach',
+			'title'  => __( 'Run Scan', 'wp-breach' ),
+			'href'   => admin_url( 'admin.php?page=wp-breach-monitoring' ),
+		) );
+
+		if ( $pending_count > 0 ) {
+			$wp_admin_bar->add_node( array(
+				'id'     => 'wp-breach-vulnerabilities',
+				'parent' => 'wp-breach',
+				'title'  => sprintf( __( 'Vulnerabilities (%d)', 'wp-breach' ), $pending_count ),
+				'href'   => admin_url( 'admin.php?page=wp-breach-vulnerabilities' ),
+			) );
+		}
+	}
+
+	/**
+	 * Display the dashboard page.
 	 *
 	 * @since    1.0.0
 	 */
 	public function display_dashboard_page() {
-		$partial_file = plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-dashboard.php';
-		if ( file_exists( $partial_file ) ) {
-			include_once $partial_file;
-		} else {
-			$this->display_placeholder_page( 'Dashboard', 'The dashboard interface will be available in Issue #004.' );
-		}
+		include_once plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-dashboard.php';
 	}
 
 	/**
-	 * Display the vulnerabilities page
+	 * Display the vulnerabilities page.
 	 *
 	 * @since    1.0.0
 	 */
 	public function display_vulnerabilities_page() {
-		$partial_file = plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-vulnerabilities.php';
-		if ( file_exists( $partial_file ) ) {
-			include_once $partial_file;
-		} else {
-			$this->display_placeholder_page( 'Vulnerabilities', 'The vulnerabilities interface will be available in Issue #004.' );
-		}
+		include_once plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-vulnerabilities.php';
 	}
 
 	/**
-	 * Display the quick fix page
-	 *
-	 * @since    1.0.0
-	 */
-	public function display_quick_fix_page() {
-		$partial_file = plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-quick-fix.php';
-		if ( file_exists( $partial_file ) ) {
-			include_once $partial_file;
-		} else {
-			$this->display_placeholder_page( 'Quick Fix', 'The quick fix interface will be available in Issue #004.' );
-		}
-	}
-
-	/**
-	 * Display the monitoring page
-	 *
-	 * @since    1.0.0
-	 */
-	public function display_monitoring_page() {
-		$partial_file = plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-monitoring.php';
-		if ( file_exists( $partial_file ) ) {
-			include_once $partial_file;
-		} else {
-			$this->display_placeholder_page( 'Monitoring', 'The monitoring interface will be available in Issue #004.' );
-		}
-	}
-
-	/**
-	 * Display the reports page
-	 *
-	 * @since    1.0.0
-	 */
-	public function display_reports_page() {
-		$partial_file = plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-reports.php';
-		if ( file_exists( $partial_file ) ) {
-			include_once $partial_file;
-		} else {
-			$this->display_placeholder_page( 'Reports', 'The reports interface will be available in Issue #004.' );
-		}
-	}
-
-	/**
-	 * Display the alerts page
-	 *
-	 * @since    1.0.0
-	 */
-	public function display_alerts_page() {
-		$partial_file = plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-alerts.php';
-		if ( file_exists( $partial_file ) ) {
-			include_once $partial_file;
-		} else {
-			$this->display_placeholder_page( 'Alerts', 'The alerts interface will be available in Issue #004.' );
-		}
-	}
-
-	/**
-	 * Display the settings page
+	 * Display the settings page.
 	 *
 	 * @since    1.0.0
 	 */
 	public function display_settings_page() {
-		$partial_file = plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-settings.php';
-		if ( file_exists( $partial_file ) ) {
-			include_once $partial_file;
-		} else {
-			$this->display_placeholder_page( 'Settings', 'The settings interface will be available in Issue #004.' );
+		include_once plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-settings.php';
+	}
+
+	/**
+	 * Display the reports page.
+	 *
+	 * @since    1.0.0
+	 */
+	public function display_reports_page() {
+		include_once plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-reports.php';
+	}
+
+	/**
+	 * Display the monitoring page.
+	 *
+	 * @since    1.0.0
+	 */
+	public function display_monitoring_page() {
+		include_once plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-monitoring.php';
+	}
+
+	/**
+	 * Display the quick fix page.
+	 *
+	 * @since    1.0.0
+	 */
+	public function display_quick_fix_page() {
+		include_once plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-quick-fix.php';
+	}
+
+	/**
+	 * Display the alerts page.
+	 *
+	 * @since    1.0.0
+	 */
+	public function display_alerts_page() {
+		include_once plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-alerts.php';
+	}
+
+	/**
+	 * Handle AJAX request for quick scan.
+	 *
+	 * @since    1.0.0
+	 */
+	public function ajax_quick_scan() {
+		// Verify nonce
+		if ( ! wp_verify_nonce( $_POST['nonce'], 'wp_breach_nonce' ) ) {
+			wp_die( __( 'Security check failed', 'wp-breach' ) );
+		}
+
+		// Check capabilities
+		if ( ! current_user_can( 'wp_breach_run_scans' ) ) {
+			wp_die( __( 'Insufficient permissions', 'wp-breach' ) );
+		}
+
+		try {
+			$database = ( new WP_Breach() )->get_database();
+			$scan_model = $database->get_scan_model();
+			
+			// Create a new quick scan
+			$scan_id = $scan_model->create_scan( array(
+				'scan_type' => 'quick',
+				'status'    => 'running',
+				'started_by' => get_current_user_id(),
+			) );
+
+			if ( $scan_id ) {
+				wp_send_json_success( array(
+					'message' => __( 'Quick scan started successfully', 'wp-breach' ),
+					'scan_id' => $scan_id,
+				) );
+			} else {
+				wp_send_json_error( array(
+					'message' => __( 'Failed to start scan', 'wp-breach' ),
+				) );
+			}
+		} catch ( Exception $e ) {
+			wp_send_json_error( array(
+				'message' => __( 'Error starting scan: ', 'wp-breach' ) . $e->getMessage(),
+			) );
 		}
 	}
 
 	/**
-	 * Display placeholder page for admin interfaces not yet implemented
+	 * Handle AJAX request for scan status.
 	 *
 	 * @since    1.0.0
-	 * @param    string   $page_title    Title of the page
-	 * @param    string   $message       Message to display
 	 */
-	private function display_placeholder_page( $page_title, $message ) {
-		?>
-		<div class="wrap">
-			<h1><?php echo esc_html( 'WP-Breach ' . $page_title ); ?></h1>
-			<div class="notice notice-info">
-				<p><strong><?php echo esc_html( $message ); ?></strong></p>
-			</div>
-		</div>
-		<?php
+	public function ajax_scan_status() {
+		// Verify nonce
+		if ( ! wp_verify_nonce( $_POST['nonce'], 'wp_breach_nonce' ) ) {
+			wp_die( __( 'Security check failed', 'wp-breach' ) );
+		}
+
+		// Check capabilities
+		if ( ! current_user_can( 'wp_breach_view_vulnerabilities' ) ) {
+			wp_die( __( 'Insufficient permissions', 'wp-breach' ) );
+		}
+
+		$scan_id = intval( $_POST['scan_id'] );
+
+		try {
+			$database = ( new WP_Breach() )->get_database();
+			$scan_model = $database->get_scan_model();
+			
+			$scan = $scan_model->get( $scan_id );
+
+			if ( $scan ) {
+				wp_send_json_success( array(
+					'status' => $scan->status,
+					'progress' => $scan->progress,
+					'completed_at' => $scan->completed_at,
+					'vulnerabilities_found' => $scan->vulnerabilities_found,
+				) );
+			} else {
+				wp_send_json_error( array(
+					'message' => __( 'Scan not found', 'wp-breach' ),
+				) );
+			}
+		} catch ( Exception $e ) {
+			wp_send_json_error( array(
+				'message' => __( 'Error getting scan status: ', 'wp-breach' ) . $e->getMessage(),
+			) );
+		}
 	}
 
 	/**
-	 * Add admin notices
+	 * Handle AJAX request for dismissing vulnerability.
+	 *
+	 * @since    1.0.0
+	 */
+	public function ajax_dismiss_vulnerability() {
+		// Verify nonce
+		if ( ! wp_verify_nonce( $_POST['nonce'], 'wp_breach_nonce' ) ) {
+			wp_die( __( 'Security check failed', 'wp-breach' ) );
+		}
+
+		// Check capabilities
+		if ( ! current_user_can( 'wp_breach_view_vulnerabilities' ) ) {
+			wp_die( __( 'Insufficient permissions', 'wp-breach' ) );
+		}
+
+		$vulnerability_id = intval( $_POST['vulnerability_id'] );
+
+		try {
+			$database = ( new WP_Breach() )->get_database();
+			$vulnerability_model = $database->get_vulnerability_model();
+			
+			$result = $vulnerability_model->update_vulnerability_status( 
+				$vulnerability_id, 
+				'dismissed',
+				array( 'dismissed_by' => get_current_user_id() )
+			);
+
+			if ( $result ) {
+				wp_send_json_success( array(
+					'message' => __( 'Vulnerability dismissed successfully', 'wp-breach' ),
+				) );
+			} else {
+				wp_send_json_error( array(
+					'message' => __( 'Failed to dismiss vulnerability', 'wp-breach' ),
+				) );
+			}
+		} catch ( Exception $e ) {
+			wp_send_json_error( array(
+				'message' => __( 'Error dismissing vulnerability: ', 'wp-breach' ) . $e->getMessage(),
+			) );
+		}
+	}
+
+	/**
+	 * Add admin notices for important security alerts.
 	 *
 	 * @since    1.0.0
 	 */
 	public function add_admin_notices() {
+		// Only show notices to users with appropriate capabilities
+		if ( ! current_user_can( 'wp_breach_view_vulnerabilities' ) ) {
+			return;
+		}
+
 		// Check for pending vulnerabilities
 		$pending_vulnerabilities = $this->get_pending_vulnerabilities_count();
 		if ( $pending_vulnerabilities > 0 ) {
@@ -338,76 +493,13 @@ class WP_Breach_Admin {
 	}
 
 	/**
-	 * Get pending vulnerabilities count
-	 *
-	 * @since    1.0.0
-	 * @return   int Number of pending vulnerabilities
-	 */
-	private function get_pending_vulnerabilities_count() {
-		try {
-			$database = ( new WP_Breach() )->get_database();
-			$vulnerability_model = $database->get_vulnerability_model();
-			return $vulnerability_model->get_vulnerability_count( array( 'status' => 'active' ) );
-		} catch ( Exception $e ) {
-			return 0;
-		}
-	}
-
-	/**
-	 * Add admin bar menu
-	 *
-	 * @since    1.0.0
-	 * @param    WP_Admin_Bar $wp_admin_bar The admin bar object
-	 */
-	public function add_admin_bar_menu( $wp_admin_bar ) {
-		// Only show to users with appropriate capabilities
-		if ( ! current_user_can( 'wp_breach_view_vulnerabilities' ) ) {
-			return;
-		}
-
-		$pending_count = $this->get_pending_vulnerabilities_count();
-		$title = __( 'WP-Breach', 'wp-breach' );
-
-		if ( $pending_count > 0 ) {
-			$title .= ' <span class="ab-label awaiting-mod">' . $pending_count . '</span>';
-		}
-
-		$wp_admin_bar->add_node( array(
-			'id'    => 'wp-breach',
-			'title' => $title,
-			'href'  => admin_url( 'admin.php?page=wp-breach' ),
-		) );
-
-		$wp_admin_bar->add_node( array(
-			'id'     => 'wp-breach-dashboard',
-			'parent' => 'wp-breach',
-			'title'  => __( 'Dashboard', 'wp-breach' ),
-			'href'   => admin_url( 'admin.php?page=wp-breach' ),
-		) );
-
-		$wp_admin_bar->add_node( array(
-			'id'     => 'wp-breach-vulnerabilities',
-			'parent' => 'wp-breach',
-			'title'  => __( 'Vulnerabilities', 'wp-breach' ),
-			'href'   => admin_url( 'admin.php?page=wp-breach-vulnerabilities' ),
-		) );
-
-		$wp_admin_bar->add_node( array(
-			'id'     => 'wp-breach-quick-scan',
-			'parent' => 'wp-breach',
-			'title'  => __( 'Run Quick Scan', 'wp-breach' ),
-			'href'   => wp_nonce_url( admin_url( 'admin.php?page=wp-breach&action=quick-scan' ), 'wp_breach_quick_scan' ),
-		) );
-	}
-
-	/**
-	 * Handle AJAX requests
+	 * Handle AJAX requests - Route to specific methods.
 	 *
 	 * @since    1.0.0
 	 */
 	public function handle_ajax_requests() {
 		// Verify nonce
-		if ( ! ( is_array( $_POST ) && isset( $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'], 'wp_breach_ajax_nonce' ) ) ) {
+		if ( ! ( is_array( $_POST ) && isset( $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'], 'wp_breach_nonce' ) ) ) {
 			wp_die( 'Security check failed' );
 		}
 
@@ -418,7 +510,7 @@ class WP_Breach_Admin {
 				$this->ajax_quick_scan();
 				break;
 			case 'wp_breach_get_scan_status':
-				$this->ajax_get_scan_status();
+				$this->ajax_scan_status();
 				break;
 			case 'wp_breach_dismiss_vulnerability':
 				$this->ajax_dismiss_vulnerability();
@@ -429,105 +521,7 @@ class WP_Breach_Admin {
 	}
 
 	/**
-	 * AJAX handler for quick scan
-	 *
-	 * @since    1.0.0
-	 */
-	private function ajax_quick_scan() {
-		// Check capabilities
-		if ( ! current_user_can( 'wp_breach_run_scans' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Insufficient permissions', 'wp-breach' ) ) );
-		}
-
-		try {
-			// Load scanner class
-			require_once WP_BREACH_PLUGIN_DIR . 'includes/scanners/class-wp-breach-scanner.php';
-			
-			$scanner = new WP_Breach_Scanner();
-			$scan_result = $scanner->start_quick_scan();
-			
-			if ( $scan_result && isset( $scan_result['scan_id'] ) ) {
-				wp_send_json_success( array( 
-					'message' => __( 'Quick scan initiated successfully', 'wp-breach' ),
-					'scan_id' => $scan_result['scan_id']
-				) );
-			} else {
-				wp_send_json_error( array( 'message' => __( 'Failed to start scan', 'wp-breach' ) ) );
-			}
-		} catch ( Exception $e ) {
-			wp_send_json_error( array( 'message' => $e->getMessage() ) );
-		}
-	}
-
-	/**
-	 * AJAX handler for getting scan status
-	 *
-	 * @since    1.0.0
-	 */
-	private function ajax_get_scan_status() {
-		// Check capabilities
-		if ( ! current_user_can( 'wp_breach_view_vulnerabilities' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Insufficient permissions', 'wp-breach' ) ) );
-		}
-
-		try {
-			$database = ( new WP_Breach() )->get_database();
-			$scan_model = $database->get_scan_model();
-			$current_scan = $scan_model->get_current_scan();
-			
-			if ( $current_scan ) {
-				$progress = $scan_model->get_scan_progress( $current_scan['id'] );
-				wp_send_json_success( array(
-					'status' => $current_scan['status'],
-					'progress' => $progress,
-					'message' => sprintf( __( 'Scan in progress: %s', 'wp-breach' ), $progress['current_step'] ?? '' )
-				) );
-			} else {
-				wp_send_json_success( array(
-					'status' => 'idle',
-					'message' => __( 'No scan in progress', 'wp-breach' )
-				) );
-			}
-		} catch ( Exception $e ) {
-			wp_send_json_error( array( 'message' => $e->getMessage() ) );
-		}
-	}
-
-	/**
-	 * AJAX handler for dismissing vulnerability
-	 *
-	 * @since    1.0.0
-	 */
-	private function ajax_dismiss_vulnerability() {
-		// Check capabilities
-		if ( ! current_user_can( 'wp_breach_view_vulnerabilities' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Insufficient permissions', 'wp-breach' ) ) );
-		}
-
-		$vulnerability_id = intval( $_POST['vulnerability_id'] ?? 0 );
-
-		if ( $vulnerability_id <= 0 ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid vulnerability ID', 'wp-breach' ) ) );
-		}
-
-		try {
-			$database = ( new WP_Breach() )->get_database();
-			$vulnerability_model = $database->get_vulnerability_model();
-			
-			$result = $vulnerability_model->update_vulnerability( $vulnerability_id, array( 'status' => 'dismissed' ) );
-			
-			if ( $result ) {
-				wp_send_json_success( array( 'message' => __( 'Vulnerability dismissed successfully', 'wp-breach' ) ) );
-			} else {
-				wp_send_json_error( array( 'message' => __( 'Failed to dismiss vulnerability', 'wp-breach' ) ) );
-			}
-		} catch ( Exception $e ) {
-			wp_send_json_error( array( 'message' => $e->getMessage() ) );
-		}
-	}
-
-	/**
-	 * Add dashboard widgets
+	 * Add dashboard widgets.
 	 *
 	 * @since    1.0.0
 	 */
@@ -545,21 +539,24 @@ class WP_Breach_Admin {
 	}
 
 	/**
-	 * Display dashboard widget
+	 * Display dashboard widget content.
 	 *
 	 * @since    1.0.0
 	 */
 	public function display_dashboard_widget() {
-		$widget_file = plugin_dir_path( __FILE__ ) . 'partials/wp-breach-admin-dashboard-widget.php';
-		if ( file_exists( $widget_file ) ) {
-			include_once $widget_file;
+		$pending_vulnerabilities = $this->get_pending_vulnerabilities_count();
+		
+		echo '<div class="wp-breach-widget">';
+		echo '<p><strong>' . __( 'WP-Breach Security Status', 'wp-breach' ) . '</strong></p>';
+		
+		if ( $pending_vulnerabilities > 0 ) {
+			echo '<p style="color: #d63384;">⚠️ ' . sprintf( _n( '%d vulnerability detected', '%d vulnerabilities detected', $pending_vulnerabilities, 'wp-breach' ), $pending_vulnerabilities ) . '</p>';
+			echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=wp-breach-vulnerabilities' ) ) . '" class="button button-primary">' . __( 'View Details', 'wp-breach' ) . '</a></p>';
 		} else {
-			// Display simple widget content for Issue #002
-			echo '<div class="wp-breach-widget">';
-			echo '<p><strong>WP-Breach Security Status</strong></p>';
-			echo '<p>✅ Database layer implemented (Issue #002 complete)</p>';
-			echo '<p>⏳ Admin interface coming in Issue #004</p>';
-			echo '</div>';
+			echo '<p style="color: #198754;">✅ ' . __( 'No active vulnerabilities detected', 'wp-breach' ) . '</p>';
+			echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=wp-breach-monitoring' ) ) . '" class="button">' . __( 'Run Scan', 'wp-breach' ) . '</a></p>';
 		}
+		
+		echo '</div>';
 	}
 }

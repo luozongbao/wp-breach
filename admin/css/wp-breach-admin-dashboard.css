@@ -1,0 +1,828 @@
+/**
+ * WP Breach Dashboard Styles
+ *
+ * Styles for the admin dashboard interface including
+ * cards, widgets, charts, and responsive design.
+ *
+ * @package WP_Breach
+ * @since 1.0.0
+ */
+
+/* Dashboard Container */
+.wp-breach-dashboard {
+    background: #f1f1f1;
+    margin: 0 -20px;
+    padding: 20px;
+}
+
+.wp-breach-dashboard .wp-heading-inline {
+    margin-bottom: 10px;
+}
+
+.wp-breach-version {
+    color: #666;
+    font-size: 14px;
+    font-weight: normal;
+    margin-left: 10px;
+}
+
+/* Dashboard Actions */
+.wp-breach-dashboard-actions {
+    margin: 20px 0;
+}
+
+.wp-breach-dashboard-actions .button {
+    margin-right: 10px;
+}
+
+.wp-breach-dashboard-actions .dashicons {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+/* Security Overview */
+.wp-breach-security-overview {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.wp-breach-status-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    flex: 1;
+}
+
+/* Security Status Cards */
+.wp-breach-card {
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wp-breach-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.wp-breach-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.wp-breach-card-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.wp-breach-card-icon {
+    font-size: 24px;
+    opacity: 0.7;
+}
+
+.wp-breach-card-content {
+    text-align: center;
+}
+
+.wp-breach-card-number {
+    font-size: 36px;
+    font-weight: bold;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.wp-breach-card-label {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.4;
+}
+
+/* Card Colors */
+.wp-breach-card-critical {
+    border-left: 4px solid #dc3232;
+}
+
+.wp-breach-card-critical .wp-breach-card-number {
+    color: #dc3232;
+}
+
+.wp-breach-card-critical .wp-breach-card-icon {
+    color: #dc3232;
+}
+
+.wp-breach-card-high {
+    border-left: 4px solid #ffb900;
+}
+
+.wp-breach-card-high .wp-breach-card-number {
+    color: #ffb900;
+}
+
+.wp-breach-card-high .wp-breach-card-icon {
+    color: #ffb900;
+}
+
+.wp-breach-card-medium {
+    border-left: 4px solid #0073aa;
+}
+
+.wp-breach-card-medium .wp-breach-card-number {
+    color: #0073aa;
+}
+
+.wp-breach-card-medium .wp-breach-card-icon {
+    color: #0073aa;
+}
+
+.wp-breach-card-low {
+    border-left: 4px solid #46b450;
+}
+
+.wp-breach-card-low .wp-breach-card-number {
+    color: #46b450;
+}
+
+.wp-breach-card-low .wp-breach-card-icon {
+    color: #46b450;
+}
+
+/* Security Score Widget */
+.wp-breach-security-score-widget {
+    min-width: 300px;
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.wp-breach-score-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.wp-breach-score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #46b450 0deg calc(var(--score, 75) * 3.6deg),
+        #e1e1e1 calc(var(--score, 75) * 3.6deg) 360deg
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.wp-breach-score-circle::before {
+    content: '';
+    width: 80px;
+    height: 80px;
+    background: #fff;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.wp-breach-score-text {
+    z-index: 1;
+    text-align: center;
+}
+
+.wp-breach-score-number {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.wp-breach-score-label {
+    display: block;
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.wp-breach-score-description {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.wp-breach-score-good {
+    color: #46b450;
+}
+
+.wp-breach-score-fair {
+    color: #ffb900;
+}
+
+.wp-breach-score-poor {
+    color: #dc3232;
+}
+
+/* Dashboard Grid */
+.wp-breach-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+/* Widgets */
+.wp-breach-widget {
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.wp-breach-widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e1e1e1;
+    background: #f9f9f9;
+}
+
+.wp-breach-widget-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.wp-breach-widget-content {
+    padding: 20px;
+}
+
+/* Latest Scan Widget */
+.wp-breach-scan-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.wp-breach-scan-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.wp-breach-scan-info strong {
+    font-size: 14px;
+    color: #333;
+}
+
+.wp-breach-scan-info span {
+    font-size: 16px;
+    color: #666;
+}
+
+.wp-breach-status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.wp-breach-status-completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.wp-breach-status-running {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.wp-breach-status-failed {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.wp-breach-no-scan {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+}
+
+/* Vulnerability List */
+.wp-breach-vulnerability-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.wp-breach-vulnerability-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border: 1px solid #e1e1e1;
+    border-radius: 6px;
+    background: #f9f9f9;
+    transition: background-color 0.2s ease;
+}
+
+.wp-breach-vulnerability-item:hover {
+    background: #f0f0f0;
+    cursor: pointer;
+}
+
+.wp-breach-vulnerability-severity {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.wp-breach-severity-critical {
+    background: #dc3232;
+    color: #fff;
+}
+
+.wp-breach-severity-high {
+    background: #ffb900;
+    color: #fff;
+}
+
+.wp-breach-severity-medium {
+    background: #0073aa;
+    color: #fff;
+}
+
+.wp-breach-severity-low {
+    background: #46b450;
+    color: #fff;
+}
+
+.wp-breach-vulnerability-details {
+    flex: 1;
+}
+
+.wp-breach-vulnerability-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.wp-breach-vulnerability-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 12px;
+    color: #666;
+}
+
+.wp-breach-vulnerability-actions {
+    flex-shrink: 0;
+}
+
+.wp-breach-no-vulnerabilities {
+    text-align: center;
+    padding: 40px 20px;
+    color: #46b450;
+}
+
+/* Chart Styles */
+.wp-breach-chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.wp-breach-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.wp-breach-legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.wp-breach-legend-scans {
+    background: #0073aa;
+}
+
+.wp-breach-legend-issues {
+    background: #dc3232;
+}
+
+/* Distribution Chart */
+.wp-breach-distribution-chart {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.wp-breach-distribution-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.wp-breach-distribution-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+.wp-breach-distribution-label {
+    font-weight: 500;
+}
+
+.wp-breach-distribution-count {
+    background: #0073aa;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* System Information */
+.wp-breach-system-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.wp-breach-system-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.wp-breach-system-stat:last-child {
+    border-bottom: none;
+}
+
+.wp-breach-stat-label {
+    font-weight: 500;
+    color: #333;
+}
+
+.wp-breach-stat-value {
+    color: #666;
+    font-family: monospace;
+}
+
+/* Quick Actions */
+.wp-breach-action-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.wp-breach-action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 15px 20px;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.wp-breach-action-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.wp-breach-action-button .dashicons {
+    font-size: 18px;
+}
+
+/* Modal Styles */
+.wp-breach-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wp-breach-modal-content {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: hidden;
+}
+
+.wp-breach-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e1e1e1;
+    background: #f9f9f9;
+}
+
+.wp-breach-modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.wp-breach-modal-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    color: #666;
+}
+
+.wp-breach-modal-close:hover {
+    color: #000;
+}
+
+.wp-breach-modal-body {
+    padding: 20px;
+}
+
+.wp-breach-modal-footer {
+    padding: 20px;
+    border-top: 1px solid #e1e1e1;
+    background: #f9f9f9;
+    text-align: right;
+}
+
+.wp-breach-modal-footer .button {
+    margin-left: 10px;
+}
+
+/* Scan Progress */
+.wp-breach-scan-progress {
+    margin-bottom: 30px;
+}
+
+.wp-breach-progress-bar {
+    width: 100%;
+    height: 20px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.wp-breach-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #0073aa, #46b450);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.wp-breach-progress-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wp-breach-progress-percentage {
+    font-weight: bold;
+    font-size: 18px;
+    color: #0073aa;
+}
+
+.wp-breach-progress-status {
+    color: #666;
+    font-style: italic;
+}
+
+.wp-breach-scan-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.wp-breach-scan-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.wp-breach-detail-label {
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+.wp-breach-detail-value {
+    font-size: 16px;
+    color: #0073aa;
+    font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .wp-breach-dashboard-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .wp-breach-dashboard {
+        margin: 0 -10px;
+        padding: 10px;
+    }
+    
+    .wp-breach-security-overview {
+        flex-direction: column;
+    }
+    
+    .wp-breach-status-cards {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    
+    .wp-breach-dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .wp-breach-scan-summary {
+        grid-template-columns: 1fr;
+    }
+    
+    .wp-breach-vulnerability-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .wp-breach-vulnerability-meta {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .wp-breach-action-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .wp-breach-modal-content {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .wp-breach-scan-details {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .wp-breach-status-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .wp-breach-chart-legend {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .wp-breach-dashboard-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .wp-breach-dashboard-actions .button {
+        margin: 0;
+        justify-content: center;
+    }
+}
+
+/* Animation Classes */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.wp-breach-fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.wp-breach-pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Loading States */
+.wp-breach-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.wp-breach-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.8);
+    z-index: 10;
+}
+
+.wp-breach-loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #0073aa;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+    z-index: 11;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Accessibility */
+.wp-breach-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
+}
+
+/* Focus States */
+.wp-breach-vulnerability-item:focus,
+.wp-breach-action-button:focus,
+.button:focus {
+    outline: 2px solid #0073aa;
+    outline-offset: 2px;
+}
+
+/* High Contrast Support */
+@media (prefers-contrast: high) {
+    .wp-breach-card {
+        border-width: 2px;
+    }
+    
+    .wp-breach-vulnerability-item {
+        border-width: 2px;
+    }
+    
+    .wp-breach-status {
+        border: 1px solid currentColor;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .wp-breach-card,
+    .wp-breach-action-button,
+    .wp-breach-vulnerability-item {
+        transition: none;
+    }
+    
+    .wp-breach-fade-in,
+    .wp-breach-pulse {
+        animation: none;
+    }
+}
