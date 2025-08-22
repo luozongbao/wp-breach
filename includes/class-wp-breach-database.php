@@ -1,6 +1,6 @@
 <?php
 /**
- * The database-specific functionality of the plugin.
+ * The database class for the WP-Breach plugin.
  *
  * @link       https://github.com/luozongbao
  * @since      1.0.0
@@ -28,7 +28,7 @@ class WP_Breach_Database {
 	 * @access   private
 	 * @var      string    $db_version    The current database version.
 	 */
-	private $db_version = '1.0.0';
+	private $db_version = '1.0.1';
 
 	/**
 	 * The WordPress database object.

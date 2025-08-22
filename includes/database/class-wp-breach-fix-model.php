@@ -560,4 +560,24 @@ class WP_Breach_Fix_Model extends WP_Breach_Base_Model {
 
 		return $timeline;
 	}
+
+	/**
+	 * Get applied fixes with optional filtering.
+	 *
+	 * @since    1.0.0
+	 * @param    array     $args    Query arguments.
+	 * @return   array     Applied fixes.
+	 */
+	public function get_applied_fixes( $args = array() ) {
+		$defaults = array(
+			'where'     => array( 'status' => 'applied' ),
+			'order_by'  => 'applied_at',
+			'order'     => 'DESC',
+			'limit'     => 20,
+			'offset'    => 0
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+		return $this->get_all( $args );
+	}
 }

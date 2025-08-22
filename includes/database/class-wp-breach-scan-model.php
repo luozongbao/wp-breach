@@ -416,4 +416,191 @@ class WP_Breach_Scan_Model extends WP_Breach_Base_Model {
 
 		return ! empty( $scans ) ? $scans[0] : null;
 	}
+
+	/**
+	 * Get scan count with optional filters.
+	 *
+	 * @since    1.0.0
+	 * @param    array    $filters    Optional filters.
+	 * @return   int    Scan count.
+	 */
+	public function get_scan_count( $filters = array() ) {
+		$where_clause = '1=1';
+		$where_values = array();
+
+		if ( ! empty( $filters['status'] ) ) {
+			$where_clause .= ' AND status = %s';
+			$where_values[] = $filters['status'];
+		}
+
+		if ( ! empty( $filters['type'] ) ) {
+			$where_clause .= ' AND scan_type = %s';
+			$where_values[] = $filters['type'];
+		}
+
+		if ( ! empty( $filters['user_id'] ) ) {
+			$where_clause .= ' AND started_by = %d';
+			$where_values[] = $filters['user_id'];
+		}
+
+		$sql = "SELECT COUNT(*) FROM {$this->table_name} WHERE {$where_clause}";
+
+		if ( ! empty( $where_values ) ) {
+			return (int) $this->wpdb->get_var( $this->wpdb->prepare( $sql, $where_values ) );
+		}
+
+		return (int) $this->wpdb->get_var( $sql );
+	}
+
+	/**
+	 * Get scans with optional filters.
+	 *
+	 * @since    1.0.0
+	 * @param    array    $filters    Optional filters.
+	 * @return   array    Scans.
+	 */
+	public function get_scans( $filters = array() ) {
+		$args = array();
+		
+		if ( ! empty( $filters ) ) {
+			$args['where'] = array();
+			
+			if ( isset( $filters['status'] ) ) {
+				$args['where']['status'] = $filters['status'];
+			}
+			
+			if ( isset( $filters['type'] ) ) {
+				$args['where']['scan_type'] = $filters['type'];
+			}
+			
+			if ( isset( $filters['user_id'] ) ) {
+				$args['where']['started_by'] = $filters['user_id'];
+			}
+			
+			if ( isset( $filters['limit'] ) ) {
+				$args['limit'] = intval( $filters['limit'] );
+			}
+			
+			if ( isset( $filters['offset'] ) ) {
+				$args['offset'] = intval( $filters['offset'] );
+			}
+		}
+		
+		// Default ordering
+		if ( ! isset( $args['order_by'] ) ) {
+			$args['order_by'] = 'created_at';
+			$args['order'] = 'DESC';
+		}
+		
+		return $this->get_all( $args );
+	}
+
+	/**
+	 * Get latest completed scan.
+	 *
+	 * @since    1.0.0
+	 * @return   object|null    Latest completed scan or null.
+	 */
+	public function get_latest_completed_scan() {
+		$scans = $this->get_all( array(
+			'where'    => array( 'status' => 'completed' ),
+			'order_by' => 'completed_at',
+			'order'    => 'DESC',
+			'limit'    => 1
+		) );
+		
+		return ! empty( $scans ) ? $scans[0] : null;
+	}
+
+	/**
+	 * Get current running scan.
+	 *
+	 * @since    1.0.0
+	 * @return   object|null    Current scan or null.
+	 */
+	public function get_current_scan() {
+		$scans = $this->get_all( array(
+			'where'    => array( 'status' => 'running' ),
+			'order_by' => 'started_at',
+			'order'    => 'DESC',
+			'limit'    => 1
+		) );
+		
+		return ! empty( $scans ) ? $scans[0] : null;
+	}
+
+	/**
+	 * Get security score history for reporting.
+	 *
+	 * @since    1.0.0
+	 * @param    int      $days    Number of days to look back.
+	 * @return   array    Security score history.
+	 */
+	public function get_security_score_history( $days = 30 ) {
+		$start_date = date( 'Y-m-d', strtotime( "-{$days} days" ) );
+		
+		$results = $this->wpdb->get_results(
+			$this->wpdb->prepare(
+				"SELECT 
+					DATE(completed_at) as date,
+					AVG(
+						GREATEST(0, 100 - (
+							(critical_count * 25) + 
+							(high_count * 15) + 
+							(medium_count * 5) + 
+							(low_count * 1)
+						))
+					) as avg_score,
+					COUNT(*) as scan_count,
+					AVG(critical_count) as avg_critical,
+					AVG(high_count) as avg_high,
+					AVG(medium_count) as avg_medium,
+					AVG(low_count) as avg_low
+				FROM {$this->table_name} 
+				WHERE status = 'completed' 
+				AND completed_at >= %s 
+				GROUP BY DATE(completed_at)
+				ORDER BY date ASC",
+				$start_date
+			),
+			ARRAY_A
+		);
+
+		// Fill in missing dates with null values
+		$history = array();
+		for ( $i = $days - 1; $i >= 0; $i-- ) {
+			$date = date( 'Y-m-d', strtotime( "-{$i} days" ) );
+			$found = false;
+			
+			foreach ( $results as $result ) {
+				if ( $result['date'] === $date ) {
+					$history[] = array(
+						'date'        => $date,
+						'score'       => round( (float) $result['avg_score'], 1 ),
+						'scan_count'  => (int) $result['scan_count'],
+						'critical'    => round( (float) $result['avg_critical'], 1 ),
+						'high'        => round( (float) $result['avg_high'], 1 ),
+						'medium'      => round( (float) $result['avg_medium'], 1 ),
+						'low'         => round( (float) $result['avg_low'], 1 )
+					);
+					$found = true;
+					break;
+				}
+			}
+			
+			if ( ! $found ) {
+				$history[] = array(
+					'date'        => $date,
+					'score'       => null,
+					'scan_count'  => 0,
+					'critical'    => 0,
+					'high'        => 0,
+					'medium'      => 0,
+					'low'         => 0
+				);
+			}
+		}
+
+		return $history;
+	}
 }

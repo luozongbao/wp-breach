@@ -268,7 +268,31 @@ class WP_Breach {
 		if ( version_compare( $current_version, $required_version, '<' ) ) {
 			// Run database migrations
 			$database->create_tables();
+			
+			// Run specific migrations
+			$this->run_database_migrations( $current_version, $required_version );
+			
 			$database->update_migration_version( $required_version );
+		}
+	}
+
+	/**
+	 * Run database migrations based on version.
+	 *
+	 * @since    1.0.0
+	 * @param    string   $from_version    The current version.
+	 * @param    string   $to_version      The target version.
+	 */
+	private function run_database_migrations( $from_version, $to_version ) {
+		// Migration from 1.0.0 to 1.0.1 - Add false_positive column
+		if ( version_compare( $from_version, '1.0.1', '<' ) && version_compare( $to_version, '1.0.1', '>=' ) ) {
+			$migration_file = WP_BREACH_PLUGIN_DIR . 'includes/database/migrations/add-false-positive-column.php';
+			if ( file_exists( $migration_file ) ) {
+				$result = include $migration_file;
+				if ( is_array( $result ) && ! $result['success'] ) {
+					error_log( 'WP-Breach Migration Failed: ' . $result['message'] );
+				}
+			}
 		}
 	}
 
