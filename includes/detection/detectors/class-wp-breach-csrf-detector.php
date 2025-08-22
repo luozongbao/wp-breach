@@ -243,7 +243,7 @@ class WP_Breach_Csrf_Detector {
             $line_number = $this->get_line_number($content, $action_match[1]);
 
             // Look for the corresponding function
-            $function_pattern = '/function\s+\w*' . preg_quote($action_name, '/') . '\w*\s*\([^)]*\)\s*\{([^}]+|\{[^}]*\})*\}/s';
+            $function_pattern = self::get_function_pattern($action_name);
             if (preg_match($function_pattern, $content, $function_match)) {
                 $function_content = $function_match[0];
                 
