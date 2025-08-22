@@ -376,7 +376,14 @@ class WP_Breach_File_Inclusion_Detector {
                     $line_number = $this->get_line_number($content, $usage_match[1]);
                     
                     // Check if variable is validated before use
-                    $validation_context = substr($content, $var_info['line'] * 80, $usage_match[1] - $var_info['line'] * 80);
+                    // Calculate the character offset for the start of the tainted variable's line
+                    $lines_up_to_var = explode("\n", $content);
+                    $start_offset = 0;
+                    for ($i = 0; $i < $var_info['line'] && $i < count($lines_up_to_var); $i++) {
+                        // +1 for the newline character
+                        $start_offset += strlen($lines_up_to_var[$i]) + 1;
+                    }
+                    $validation_context = substr($content, $start_offset, $usage_match[1] - $start_offset);
                     $has_validation = $this->has_variable_validation($validation_context, $var_name);
 
                     $vulnerabilities[] = array(
