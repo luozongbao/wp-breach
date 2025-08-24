@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    bootstrap="tests/bootstrap.php"
+    backupGlobals="false"
+    colors="true"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+    processIsolation="false"
+    stopOnFailure="false"
+    verbose="true"
+    testSuiteLoaderClass="PHPUnit\Runner\StandardTestSuiteLoader"
+    beStrictAboutTestsThatDoNotTestAnything="true"
+    beStrictAboutOutputDuringTests="true"
+    beStrictAboutTodoAnnotatedTests="true"
+    beStrictAboutChangesToGlobalState="true">
+
+    <testsuites>
+        <!-- Unit Tests -->
+        <testsuite name="unit">
+            <directory suffix="Test.php">tests/unit/</directory>
+        </testsuite>
+        
+        <!-- Integration Tests -->
+        <testsuite name="integration">
+            <directory suffix="Test.php">tests/integration/</directory>
+        </testsuite>
+        
+        <!-- Performance Tests -->
+        <testsuite name="performance">
+            <directory suffix="Test.php">tests/performance/</directory>
+        </testsuite>
+        
+        <!-- All Tests -->
+        <testsuite name="all">
+            <directory suffix="Test.php">tests/</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">includes/</directory>
+            <directory suffix=".php">admin/</directory>
+            <directory suffix=".php">public/</directory>
+            <exclude>
+                <directory suffix=".php">tests/</directory>
+                <directory suffix=".php">vendor/</directory>
+                <file>wp-breach.php</file>
+                <file>uninstall.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+
+    <php>
+        <!-- WordPress Test Database -->
+        <const name="DB_NAME" value="wp_breach_test" />
+        <const name="DB_USER" value="root" />
+        <const name="DB_PASSWORD" value="" />
+        <const name="DB_HOST" value="localhost" />
+        <const name="DB_CHARSET" value="utf8" />
+        <const name="DB_COLLATE" value="" />
+        
+        <!-- WordPress Test Configuration -->
+        <const name="WP_TESTS_DOMAIN" value="wp-breach-test.local" />
+        <const name="WP_TESTS_EMAIL" value="admin@wp-breach-test.local" />
+        <const name="WP_TESTS_TITLE" value="WP-Breach Test Site" />
+        
+        <!-- Debug Settings for Testing -->
+        <const name="WP_DEBUG" value="true" />
+        <const name="WP_DEBUG_LOG" value="true" />
+        <const name="WP_DEBUG_DISPLAY" value="false" />
+        
+        <!-- Performance Testing Settings -->
+        <const name="WP_BREACH_TEST_PERFORMANCE" value="true" />
+        <const name="WP_BREACH_TEST_LARGE_DATASETS" value="false" />
+        
+        <!-- Test Environment Variables -->
+        <env name="WP_TESTS_DIR" value="/tmp/wordpress-tests-lib" />
+        <env name="WP_CORE_DIR" value="/tmp/wordpress/" />
+    </php>
+
+    <logging>
+        <log type="coverage-html" target="tests/coverage/html" lowUpperBound="35" highLowerBound="70"/>
+        <log type="coverage-clover" target="tests/coverage/clover.xml"/>
+        <log type="coverage-php" target="tests/coverage/coverage.serialized"/>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="true"/>
+        <log type="junit" target="tests/coverage/junit.xml"/>
+        <log type="testdox-html" target="tests/coverage/testdox.html"/>
+        <log type="testdox-text" target="tests/coverage/testdox.txt"/>
+    </logging>
+</phpunit>
