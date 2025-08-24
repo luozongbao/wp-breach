@@ -64,6 +64,9 @@ class WP_Breach_Activator {
 			// Create necessary capabilities
 			self::create_capabilities();
 
+			// Initialize user management system (Issue #010)
+			self::initialize_user_management_system();
+
 			// Schedule initial scan if needed
 			self::schedule_initial_setup();
 
@@ -138,6 +141,36 @@ class WP_Breach_Activator {
 			$admin_role->add_cap( 'wp_breach_manage_settings' );
 			$admin_role->add_cap( 'wp_breach_view_reports' );
 			$admin_role->add_cap( 'wp_breach_manage_users' );
+		}
+	}
+
+	/**
+	 * Initialize user management and permissions system
+	 *
+	 * @since    1.0.0
+	 */
+	private static function initialize_user_management_system() {
+		// Load permissions manager
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/permissions/class-wp-breach-permissions-manager.php';
+		
+		// Initialize permissions manager
+		$permissions_manager = new WP_Breach_Permissions_Manager();
+		
+		// Create custom roles and capabilities
+		$permissions_manager->create_custom_roles();
+		
+		// Add capabilities to existing administrator role
+		$permissions_manager->add_admin_capabilities();
+		
+		// Run user management migration
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/migrations/class-wp-breach-migration-010-user-management.php';
+		$migration = new WP_Breach_Migration_010_User_Management();
+		$result = $migration->up();
+		
+		if ( ! $result ) {
+			error_log( 'WP-Breach: User Management System initialization failed during activation' );
+		} else {
+			error_log( 'WP-Breach: User Management System initialized successfully during activation' );
 		}
 	}
 

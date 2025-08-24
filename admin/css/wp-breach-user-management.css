@@ -1,0 +1,877 @@
+/**
+ * WP-Breach User Management Styles
+ *
+ * This file contains all styles for the user management and permissions interface.
+ *
+ * @package    WP_Breach
+ * @subpackage WP_Breach/admin/css
+ * @since      1.0.0
+ */
+
+/* ==========================================================================
+   Base Styles
+   ========================================================================== */
+
+.wp-breach-user-management {
+	margin-top: 20px;
+}
+
+/* ==========================================================================
+   User Cards
+   ========================================================================== */
+
+.wp-breach-user-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	margin: 10px 0;
+	padding: 15px;
+	box-shadow: 0 1px 1px rgba(0,0,0,.04);
+	transition: box-shadow 0.2s ease;
+}
+
+.wp-breach-user-card:hover {
+	box-shadow: 0 2px 4px rgba(0,0,0,.08);
+}
+
+.wp-breach-user-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.wp-breach-user-checkbox-container {
+	margin-right: 15px;
+}
+
+.wp-breach-user-checkbox {
+	transform: scale(1.2);
+}
+
+.wp-breach-user-info h3 {
+	margin: 0;
+	font-size: 16px;
+	color: #1d2327;
+}
+
+.wp-breach-user-email {
+	color: #646970;
+	font-size: 13px;
+	margin-top: 2px;
+}
+
+.wp-breach-user-last-login {
+	color: #646970;
+	font-size: 12px;
+	font-style: italic;
+	margin-top: 2px;
+}
+
+/* ==========================================================================
+   Role Badges
+   ========================================================================== */
+
+.wp-breach-roles {
+	margin: 10px 0;
+}
+
+.wp-breach-role-badge {
+	display: inline-block;
+	background: #0073aa;
+	color: white;
+	padding: 3px 8px;
+	border-radius: 3px;
+	font-size: 11px;
+	font-weight: 600;
+	margin-right: 5px;
+	margin-bottom: 3px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.wp-breach-role-badge.security_administrator {
+	background: #d63638;
+}
+
+.wp-breach-role-badge.security_manager {
+	background: #d54e21;
+}
+
+.wp-breach-role-badge.security_analyst {
+	background: #0073aa;
+}
+
+.wp-breach-role-badge.security_viewer {
+	background: #00a32a;
+}
+
+/* ==========================================================================
+   Capabilities
+   ========================================================================== */
+
+.wp-breach-capabilities {
+	margin: 10px 0;
+	font-size: 13px;
+	color: #646970;
+}
+
+.wp-breach-capability-list {
+	max-height: 200px;
+	overflow-y: auto;
+	border: 1px solid #ddd;
+	padding: 10px;
+	background: #f9f9f9;
+	border-radius: 4px;
+}
+
+.wp-breach-capability-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 5px 0;
+	border-bottom: 1px solid #eee;
+}
+
+.wp-breach-capability-item:last-child {
+	border-bottom: none;
+}
+
+.wp-breach-capability-name {
+	font-weight: 600;
+	color: #2c3338;
+}
+
+.wp-breach-capability-description {
+	color: #646970;
+	font-size: 12px;
+}
+
+/* ==========================================================================
+   User Actions
+   ========================================================================== */
+
+.wp-breach-user-actions {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.wp-breach-btn {
+	padding: 6px 12px;
+	border: 1px solid #0073aa;
+	background: #0073aa;
+	color: white;
+	text-decoration: none;
+	border-radius: 3px;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 32px;
+	white-space: nowrap;
+}
+
+.wp-breach-btn:hover {
+	background: #005a87;
+	border-color: #005a87;
+	color: white;
+	text-decoration: none;
+}
+
+.wp-breach-btn:focus {
+	outline: 2px solid #0073aa;
+	outline-offset: 2px;
+}
+
+.wp-breach-btn.secondary {
+	background: white;
+	color: #0073aa;
+}
+
+.wp-breach-btn.secondary:hover {
+	background: #f6f7f7;
+	color: #005a87;
+}
+
+.wp-breach-btn.danger {
+	background: #d63638;
+	border-color: #d63638;
+}
+
+.wp-breach-btn.danger:hover {
+	background: #b32d2e;
+	border-color: #b32d2e;
+}
+
+.wp-breach-btn:disabled {
+	background: #f6f7f7;
+	border-color: #dcdcde;
+	color: #a7aaad;
+	cursor: not-allowed;
+}
+
+.wp-breach-btn.small {
+	padding: 4px 8px;
+	font-size: 11px;
+	min-height: 24px;
+}
+
+.wp-breach-btn.large {
+	padding: 10px 20px;
+	font-size: 14px;
+	min-height: 40px;
+}
+
+/* ==========================================================================
+   Form Layouts
+   ========================================================================== */
+
+.wp-breach-form-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
+	margin-top: 20px;
+}
+
+.wp-breach-form-section {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 20px;
+	box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.wp-breach-form-section h3 {
+	margin-top: 0;
+	margin-bottom: 15px;
+	border-bottom: 1px solid #e1e1e1;
+	padding-bottom: 10px;
+	color: #1d2327;
+}
+
+.wp-breach-form-row {
+	margin-bottom: 15px;
+}
+
+.wp-breach-form-row label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 5px;
+	color: #1d2327;
+}
+
+.wp-breach-form-row input,
+.wp-breach-form-row select,
+.wp-breach-form-row textarea {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+.wp-breach-form-row input:focus,
+.wp-breach-form-row select:focus,
+.wp-breach-form-row textarea:focus {
+	border-color: #0073aa;
+	outline: none;
+	box-shadow: 0 0 0 1px #0073aa;
+}
+
+.wp-breach-form-row .description {
+	margin-top: 5px;
+	font-size: 12px;
+	color: #646970;
+	font-style: italic;
+}
+
+/* ==========================================================================
+   Search and Filters
+   ========================================================================== */
+
+.wp-breach-search-box {
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.wp-breach-search-box input {
+	width: 300px;
+	padding: 8px 12px;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+}
+
+.wp-breach-filters {
+	display: flex;
+	gap: 15px;
+	margin-bottom: 20px;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.wp-breach-filters select {
+	min-width: 150px;
+	padding: 6px 8px;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+}
+
+.wp-breach-filters label {
+	font-weight: 600;
+	color: #1d2327;
+	margin-right: 5px;
+}
+
+/* ==========================================================================
+   Statistics Cards
+   ========================================================================== */
+
+.wp-breach-stats {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 15px;
+	margin-bottom: 20px;
+}
+
+.wp-breach-stat-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 15px;
+	text-align: center;
+	box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.wp-breach-stat-number {
+	font-size: 24px;
+	font-weight: bold;
+	color: #0073aa;
+	line-height: 1;
+}
+
+.wp-breach-stat-label {
+	font-size: 12px;
+	color: #646970;
+	text-transform: uppercase;
+	margin-top: 5px;
+	letter-spacing: 0.5px;
+}
+
+/* ==========================================================================
+   Bulk Actions
+   ========================================================================== */
+
+.wp-breach-bulk-actions {
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 15px;
+	margin-bottom: 20px;
+	display: none;
+}
+
+.wp-breach-bulk-actions.active {
+	display: block;
+}
+
+.wp-breach-bulk-actions-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.wp-breach-selection-info {
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.wp-breach-bulk-action-controls {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+
+/* ==========================================================================
+   Pagination
+   ========================================================================== */
+
+.wp-breach-pagination {
+	text-align: center;
+	margin-top: 20px;
+	padding: 15px 0;
+}
+
+.wp-breach-pagination a,
+.wp-breach-pagination span {
+	display: inline-block;
+	padding: 8px 12px;
+	margin: 0 2px;
+	border: 1px solid #c3c4c7;
+	background: white;
+	color: #0073aa;
+	text-decoration: none;
+	border-radius: 3px;
+	transition: all 0.2s ease;
+}
+
+.wp-breach-pagination a:hover {
+	background: #f6f7f7;
+	border-color: #0073aa;
+}
+
+.wp-breach-pagination-current {
+	background: #0073aa;
+	color: white;
+	border-color: #0073aa;
+}
+
+/* ==========================================================================
+   Loading States
+   ========================================================================== */
+
+.wp-breach-loading {
+	text-align: center;
+	padding: 40px 20px;
+	font-style: italic;
+	color: #646970;
+	background: #f9f9f9;
+	border-radius: 4px;
+}
+
+.wp-breach-loading::before {
+	content: '';
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	border: 2px solid #f3f3f3;
+	border-top: 2px solid #0073aa;
+	border-radius: 50%;
+	animation: wp-breach-spin 1s linear infinite;
+	margin-right: 10px;
+	vertical-align: middle;
+}
+
+@keyframes wp-breach-spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+.wp-breach-no-users {
+	text-align: center;
+	padding: 40px 20px;
+	color: #646970;
+	background: #f9f9f9;
+	border-radius: 4px;
+	font-style: italic;
+}
+
+/* ==========================================================================
+   Modals
+   ========================================================================== */
+
+.wp-breach-modal {
+	display: none;
+	position: fixed;
+	z-index: 100000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.5);
+	backdrop-filter: blur(2px);
+}
+
+.wp-breach-modal-content {
+	background-color: #fff;
+	margin: 5% auto;
+	border: 1px solid #c3c4c7;
+	border-radius: 8px;
+	width: 90%;
+	max-width: 800px;
+	max-height: 80%;
+	overflow-y: auto;
+	box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+	animation: wp-breach-modal-appear 0.3s ease-out;
+}
+
+@keyframes wp-breach-modal-appear {
+	from {
+		opacity: 0;
+		transform: translateY(-50px) scale(0.9);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+.wp-breach-modal-header {
+	padding: 20px 25px;
+	border-bottom: 1px solid #c3c4c7;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background: #f6f7f7;
+	border-radius: 8px 8px 0 0;
+}
+
+.wp-breach-modal-header h2 {
+	margin: 0;
+	color: #1d2327;
+	font-size: 18px;
+}
+
+.wp-breach-modal-close {
+	background: none;
+	border: none;
+	font-size: 24px;
+	cursor: pointer;
+	color: #646970;
+	padding: 0;
+	width: 30px;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	transition: all 0.2s ease;
+}
+
+.wp-breach-modal-close:hover {
+	color: #d63638;
+	background: rgba(214, 54, 56, 0.1);
+}
+
+.wp-breach-modal-body {
+	padding: 25px;
+	min-height: 200px;
+}
+
+.wp-breach-modal-footer {
+	padding: 20px 25px;
+	border-top: 1px solid #c3c4c7;
+	text-align: right;
+	background: #f6f7f7;
+	border-radius: 0 0 8px 8px;
+}
+
+/* ==========================================================================
+   Delegations
+   ========================================================================== */
+
+.wp-breach-delegations {
+	margin: 10px 0;
+}
+
+.wp-breach-delegation-item {
+	background: #f0f6fc;
+	border: 1px solid #c3e4ed;
+	border-radius: 4px;
+	padding: 10px;
+	margin-bottom: 8px;
+}
+
+.wp-breach-delegation-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 5px;
+}
+
+.wp-breach-delegation-title {
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.wp-breach-delegation-status {
+	font-size: 11px;
+	padding: 2px 6px;
+	border-radius: 2px;
+	background: #00a32a;
+	color: white;
+	text-transform: uppercase;
+}
+
+.wp-breach-delegation-details {
+	font-size: 12px;
+	color: #646970;
+}
+
+.wp-breach-delegation-dates {
+	margin-top: 5px;
+	font-size: 11px;
+	color: #646970;
+}
+
+/* ==========================================================================
+   Severity Indicators
+   ========================================================================== */
+
+.wp-breach-severity-badge {
+	padding: 3px 8px;
+	border-radius: 3px;
+	font-size: 11px;
+	font-weight: bold;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.wp-breach-severity-badge.low {
+	background: #00a32a;
+	color: white;
+}
+
+.wp-breach-severity-badge.medium {
+	background: #d54e21;
+	color: white;
+}
+
+.wp-breach-severity-badge.high {
+	background: #d63638;
+	color: white;
+}
+
+/* ==========================================================================
+   Action Badges
+   ========================================================================== */
+
+.wp-breach-action-badge {
+	padding: 3px 8px;
+	border-radius: 3px;
+	font-size: 11px;
+	background: #f0f0f1;
+	color: #2c3338;
+	font-family: monospace;
+}
+
+/* ==========================================================================
+   Detail Rows
+   ========================================================================== */
+
+.wp-breach-detail-row {
+	display: flex;
+	margin-bottom: 12px;
+	border-bottom: 1px solid #f0f0f1;
+	padding-bottom: 8px;
+}
+
+.wp-breach-detail-label {
+	font-weight: 600;
+	width: 150px;
+	color: #1d2327;
+	flex-shrink: 0;
+}
+
+.wp-breach-detail-value {
+	flex: 1;
+	color: #646970;
+	word-break: break-word;
+}
+
+.wp-breach-detail-value pre {
+	background: #f6f7f7;
+	padding: 10px;
+	border-radius: 4px;
+	font-size: 12px;
+	overflow-x: auto;
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+/* ==========================================================================
+   Notifications
+   ========================================================================== */
+
+.wp-breach-notice {
+	padding: 12px 15px;
+	margin: 15px 0;
+	border-left: 4px solid #0073aa;
+	background: #f0f6fc;
+	border-radius: 0 4px 4px 0;
+}
+
+.wp-breach-notice.success {
+	border-left-color: #00a32a;
+	background: #f0f6f0;
+}
+
+.wp-breach-notice.error {
+	border-left-color: #d63638;
+	background: #fcf0f1;
+}
+
+.wp-breach-notice.warning {
+	border-left-color: #d54e21;
+	background: #fcf2e7;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+	.wp-breach-form-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 768px) {
+	.wp-breach-user-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+	}
+	
+	.wp-breach-user-actions {
+		width: 100%;
+		justify-content: flex-start;
+	}
+	
+	.wp-breach-filters {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	
+	.wp-breach-search-box {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	
+	.wp-breach-search-box input {
+		width: 100%;
+	}
+	
+	.wp-breach-stats {
+		grid-template-columns: 1fr;
+	}
+	
+	.wp-breach-bulk-actions-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 10px;
+	}
+	
+	.wp-breach-bulk-action-controls {
+		width: 100%;
+	}
+	
+	.wp-breach-modal-content {
+		width: 95%;
+		margin: 2% auto;
+		max-height: 95%;
+	}
+	
+	.wp-breach-detail-row {
+		flex-direction: column;
+	}
+	
+	.wp-breach-detail-label {
+		width: auto;
+		margin-bottom: 5px;
+	}
+}
+
+@media (max-width: 480px) {
+	.wp-breach-user-card {
+		padding: 10px;
+	}
+	
+	.wp-breach-form-section {
+		padding: 15px;
+	}
+	
+	.wp-breach-modal-header,
+	.wp-breach-modal-body,
+	.wp-breach-modal-footer {
+		padding: 15px;
+	}
+	
+	.wp-breach-btn {
+		padding: 8px 12px;
+		font-size: 12px;
+	}
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+	.wp-breach-user-actions,
+	.wp-breach-bulk-actions,
+	.wp-breach-search-box,
+	.wp-breach-filters,
+	.wp-breach-pagination,
+	.wp-breach-btn {
+		display: none !important;
+	}
+	
+	.wp-breach-user-card {
+		break-inside: avoid;
+		box-shadow: none;
+		border: 1px solid #000;
+		margin-bottom: 15px;
+	}
+	
+	.wp-breach-role-badge,
+	.wp-breach-severity-badge,
+	.wp-breach-action-badge {
+		border: 1px solid #000;
+		background: none !important;
+		color: #000 !important;
+	}
+}
+
+/* ==========================================================================
+   Accessibility Enhancements
+   ========================================================================== */
+
+.wp-breach-btn:focus-visible {
+	outline: 2px solid #0073aa;
+	outline-offset: 2px;
+}
+
+.wp-breach-user-checkbox:focus-visible {
+	outline: 2px solid #0073aa;
+	outline-offset: 2px;
+}
+
+.screen-reader-text {
+	position: absolute !important;
+	clip: rect(1px, 1px, 1px, 1px);
+	word-wrap: normal !important;
+	overflow: hidden;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+	.wp-breach-role-badge,
+	.wp-breach-severity-badge,
+	.wp-breach-action-badge {
+		border: 2px solid;
+	}
+	
+	.wp-breach-btn {
+		border-width: 2px;
+	}
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+	.wp-breach-btn,
+	.wp-breach-modal-content,
+	.wp-breach-user-card {
+		transition: none;
+	}
+	
+	.wp-breach-loading::before {
+		animation: none;
+	}
+}
