@@ -131,6 +131,11 @@ class WP_Breach {
 		 */
 		$this->load_scanner_classes();
 
+		/**
+		 * Load user management system (Issue #010)
+		 */
+		$this->load_user_management_classes();
+
 		$this->loader = new WP_Breach_Loader();
 	}
 
@@ -178,6 +183,9 @@ class WP_Breach {
 		$this->loader->add_action( 'wp_ajax_wp_breach_quick_scan', $plugin_admin, 'handle_ajax_requests' );
 		$this->loader->add_action( 'wp_ajax_wp_breach_get_scan_status', $plugin_admin, 'handle_ajax_requests' );
 		$this->loader->add_action( 'wp_ajax_wp_breach_dismiss_vulnerability', $plugin_admin, 'handle_ajax_requests' );
+
+		// Load user management admin hooks
+		$this->define_user_management_hooks();
 	}
 
 	/**
@@ -294,6 +302,22 @@ class WP_Breach {
 				}
 			}
 		}
+
+		// Migration for Issue #010 - User Management and Permissions System
+		$migration_010_status = get_option( 'wp_breach_migration_010_status', 'pending' );
+		if ( $migration_010_status !== 'completed' ) {
+			$migration_file = WP_BREACH_PLUGIN_DIR . 'includes/migrations/class-wp-breach-migration-010-user-management.php';
+			if ( file_exists( $migration_file ) ) {
+				require_once $migration_file;
+				$migration = new WP_Breach_Migration_010_User_Management();
+				$result = $migration->up();
+				if ( ! $result ) {
+					error_log( 'WP-Breach Migration 010 Failed: User Management System migration failed' );
+				} else {
+					error_log( 'WP-Breach Migration 010 Completed: User Management System migration successful' );
+				}
+			}
+		}
 	}
 
 	/**
@@ -310,6 +334,65 @@ class WP_Breach {
 		}
 		
 		return $database;
+	}
+
+	/**
+	 * Load user management classes and dependencies
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function load_user_management_classes() {
+		// Load permissions manager
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/permissions/class-wp-breach-permissions-manager.php';
+		
+		// Load audit logger
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/permissions/class-wp-breach-audit-logger.php';
+		
+		// Load capability checker
+		require_once WP_BREACH_PLUGIN_DIR . 'includes/permissions/class-wp-breach-capability-checker.php';
+		
+		// Load user management admin
+		require_once WP_BREACH_PLUGIN_DIR . 'admin/class-wp-breach-user-management-admin.php';
+	}
+
+	/**
+	 * Define user management and permissions system hooks
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_user_management_hooks() {
+		// Initialize permissions manager
+		$permissions_manager = new WP_Breach_Permissions_Manager();
+		$this->loader->add_action( 'init', $permissions_manager, 'init' );
+		
+		// Initialize audit logger
+		$audit_logger = new WP_Breach_Audit_Logger();
+		$this->loader->add_action( 'init', $audit_logger, 'init' );
+		
+		// Initialize capability checker
+		$capability_checker = new WP_Breach_Capability_Checker();
+		$this->loader->add_action( 'init', $capability_checker, 'init' );
+		
+		// Initialize user management admin
+		$user_management_admin = new WP_Breach_User_Management_Admin( $this->get_plugin_name(), $this->get_version() );
+		$this->loader->add_action( 'admin_menu', $user_management_admin, 'add_menu_pages' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $user_management_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $user_management_admin, 'enqueue_styles' );
+		
+		// User management AJAX handlers
+		$this->loader->add_action( 'wp_ajax_wp_breach_get_users', $user_management_admin, 'handle_ajax_get_users' );
+		$this->loader->add_action( 'wp_ajax_wp_breach_assign_role', $user_management_admin, 'handle_ajax_assign_role' );
+		$this->loader->add_action( 'wp_ajax_wp_breach_remove_role', $user_management_admin, 'handle_ajax_remove_role' );
+		$this->loader->add_action( 'wp_ajax_wp_breach_toggle_user_status', $user_management_admin, 'handle_ajax_toggle_user_status' );
+		$this->loader->add_action( 'wp_ajax_wp_breach_bulk_user_action', $user_management_admin, 'handle_ajax_bulk_user_action' );
+		$this->loader->add_action( 'wp_ajax_wp_breach_get_audit_logs', $user_management_admin, 'handle_ajax_get_audit_logs' );
+		$this->loader->add_action( 'wp_ajax_wp_breach_export_audit_logs', $user_management_admin, 'handle_ajax_export_audit_logs' );
+		$this->loader->add_action( 'wp_ajax_wp_breach_create_delegation', $user_management_admin, 'handle_ajax_create_delegation' );
+		$this->loader->add_action( 'wp_ajax_wp_breach_revoke_delegation', $user_management_admin, 'handle_ajax_revoke_delegation' );
+		$this->loader->add_action( 'wp_ajax_wp_breach_get_delegations', $user_management_admin, 'handle_ajax_get_delegations' );
+		$this->loader->add_action( 'wp_ajax_wp_breach_save_user_management_settings', $user_management_admin, 'handle_ajax_save_settings' );
 	}
 
 	/**
