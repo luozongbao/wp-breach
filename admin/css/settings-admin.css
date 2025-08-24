@@ -1,0 +1,520 @@
+/**
+ * WP-Breach Settings Admin Styles
+ *
+ * CSS styles for the settings administration interface.
+ *
+ * @package WP_Breach
+ * @since   1.0.0
+ */
+
+/* Main Container */
+.wp-breach-settings {
+    margin-top: 20px;
+}
+
+.wp-breach-settings-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.wp-breach-settings-content {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 0;
+}
+
+.wp-breach-settings-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+/* Navigation Tabs */
+.wp-breach-nav-tabs {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    margin: 0 0 -1px 0;
+}
+
+.wp-breach-nav-tabs .nav-tab {
+    border: none;
+    border-right: 1px solid #c3c4c7;
+    border-radius: 0;
+    background: transparent;
+    padding: 12px 16px;
+    font-weight: 500;
+    text-decoration: none;
+    color: #50575e;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    position: relative;
+}
+
+.wp-breach-nav-tabs .nav-tab:last-child {
+    border-right: none;
+}
+
+.wp-breach-nav-tabs .nav-tab:hover {
+    background: #f6f7f7;
+    color: #135e96;
+}
+
+.wp-breach-nav-tabs .nav-tab.nav-tab-active {
+    background: #2271b1;
+    color: #fff;
+    box-shadow: none;
+}
+
+.wp-breach-nav-tabs .nav-tab .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Tab Content */
+.wp-breach-settings-tab-content {
+    padding: 20px;
+}
+
+.settings-group-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.settings-group-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.settings-group-header .description {
+    margin: 0;
+    color: #646970;
+    font-size: 14px;
+}
+
+/* Form Table */
+.wp-breach-form-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.wp-breach-form-table th {
+    padding: 16px 0 16px 0;
+    width: 200px;
+    vertical-align: top;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.wp-breach-form-table td {
+    padding: 16px 0 16px 20px;
+    vertical-align: top;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.wp-breach-form-table tr:last-child td {
+    border-bottom: none;
+}
+
+.wp-breach-form-table th label {
+    font-weight: 600;
+    color: #1d2327;
+}
+
+/* Form Fields */
+.wp-breach-form-table input[type="text"],
+.wp-breach-form-table input[type="email"],
+.wp-breach-form-table input[type="url"],
+.wp-breach-form-table input[type="number"],
+.wp-breach-form-table input[type="time"],
+.wp-breach-form-table input[type="date"],
+.wp-breach-form-table textarea,
+.wp-breach-form-table select {
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    box-shadow: 0 0 0 transparent;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.wp-breach-form-table input:focus,
+.wp-breach-form-table textarea:focus,
+.wp-breach-form-table select:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: 2px solid transparent;
+}
+
+.wp-breach-form-table input[type="range"] {
+    width: 300px;
+    margin-right: 12px;
+}
+
+.wp-breach-form-table .range-value {
+    display: inline-block;
+    min-width: 40px;
+    padding: 4px 8px;
+    background: #f0f0f1;
+    border-radius: 3px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.wp-breach-form-table select[multiple] {
+    height: 120px;
+    padding: 4px;
+}
+
+.wp-breach-form-table select[multiple] option {
+    padding: 4px 8px;
+    border-radius: 2px;
+    margin: 1px 0;
+}
+
+/* Checkbox Styling */
+.wp-breach-form-table input[type="checkbox"] {
+    margin-right: 8px;
+    transform: scale(1.1);
+}
+
+.wp-breach-form-table input[type="checkbox"] + label {
+    font-weight: normal;
+    cursor: pointer;
+}
+
+/* Help Text */
+.wp-breach-help-text {
+    position: relative;
+    display: inline-block;
+    margin-left: 8px;
+    vertical-align: top;
+}
+
+.wp-breach-help-text .dashicons {
+    color: #72777c;
+    cursor: help;
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.wp-breach-help-text:hover .dashicons {
+    color: #2271b1;
+}
+
+.wp-breach-help-text .help-content {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1d2327;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.4;
+    white-space: nowrap;
+    max-width: 250px;
+    white-space: normal;
+    z-index: 1000;
+    margin-bottom: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+}
+
+.wp-breach-help-text .help-content::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: #1d2327;
+}
+
+.wp-breach-help-text:hover .help-content {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Submit Section */
+.submit-section {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.submit-section .button {
+    padding: 8px 16px;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.submit-section .button-primary {
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+}
+
+.submit-section .button-primary:hover {
+    background: #135e96;
+    border-color: #135e96;
+}
+
+.submit-section .button-secondary {
+    background: #f6f7f7;
+    border-color: #c3c4c7;
+    color: #50575e;
+}
+
+.submit-section .button-secondary:hover {
+    background: #f0f0f1;
+    border-color: #8c8f94;
+}
+
+/* Sidebar */
+.wp-breach-settings-sidebar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sidebar-section {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 16px;
+}
+
+.sidebar-section h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.sidebar-section p {
+    margin: 0 0 16px 0;
+    color: #646970;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.sidebar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-actions .button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 13px;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.import-section {
+    margin-top: 8px;
+}
+
+.profile-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.profile-buttons .button {
+    font-size: 12px;
+    padding: 6px 10px;
+    text-align: left;
+}
+
+/* Field Dependencies */
+.wp-breach-form-table tr[data-dependency-hidden="true"] {
+    display: none;
+}
+
+.wp-breach-form-table tr.dependency-disabled {
+    opacity: 0.6;
+}
+
+.wp-breach-form-table tr.dependency-disabled input,
+.wp-breach-form-table tr.dependency-disabled select,
+.wp-breach-form-table tr.dependency-disabled textarea {
+    background: #f6f7f7;
+    color: #8c8f94;
+}
+
+/* Loading States */
+.wp-breach-settings.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.wp-breach-settings .spinner {
+    float: none;
+    margin: 0 8px 0 0;
+    vertical-align: middle;
+}
+
+/* Success/Error States */
+.wp-breach-form-table .field-error {
+    border-color: #d63638 !important;
+    box-shadow: 0 0 0 1px #d63638 !important;
+}
+
+.wp-breach-form-table .field-success {
+    border-color: #00a32a !important;
+    box-shadow: 0 0 0 1px #00a32a !important;
+}
+
+.field-error-message {
+    color: #d63638;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
+.field-success-message {
+    color: #00a32a;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+    .wp-breach-settings-container {
+        flex-direction: column;
+    }
+    
+    .wp-breach-settings-sidebar {
+        width: auto;
+    }
+    
+    .wp-breach-settings-sidebar-content {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .sidebar-section {
+        flex: 1;
+        min-width: 250px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .wp-breach-nav-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .wp-breach-nav-tabs .nav-tab {
+        min-width: auto;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .wp-breach-form-table,
+    .wp-breach-form-table tbody,
+    .wp-breach-form-table tr,
+    .wp-breach-form-table th,
+    .wp-breach-form-table td {
+        display: block;
+        width: auto;
+    }
+    
+    .wp-breach-form-table th {
+        padding: 8px 0 4px 0;
+        width: auto;
+    }
+    
+    .wp-breach-form-table td {
+        padding: 4px 0 16px 0;
+        border-bottom: 1px solid #f0f0f1;
+    }
+    
+    .wp-breach-form-table input[type="text"],
+    .wp-breach-form-table input[type="email"],
+    .wp-breach-form-table input[type="url"],
+    .wp-breach-form-table input[type="number"],
+    .wp-breach-form-table textarea,
+    .wp-breach-form-table select {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .submit-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .submit-section .button {
+        text-align: center;
+    }
+    
+    .wp-breach-settings-sidebar-content {
+        flex-direction: column;
+    }
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.wp-breach-settings-tab-content {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .wp-breach-settings-content,
+    .sidebar-section {
+        background: #1d2327;
+        border-color: #3c434a;
+    }
+    
+    .settings-group-header {
+        border-bottom-color: #3c434a;
+    }
+    
+    .settings-group-header h2 {
+        color: #f0f0f1;
+    }
+    
+    .settings-group-header .description {
+        color: #a7aaad;
+    }
+    
+    .wp-breach-form-table th label {
+        color: #f0f0f1;
+    }
+    
+    .wp-breach-form-table td {
+        border-bottom-color: #3c434a;
+    }
+}
